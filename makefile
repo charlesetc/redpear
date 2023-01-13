@@ -1,5 +1,9 @@
+dev:
+	tmux split-pane -v make build
+	make serve
+
 build:
-	esbuild src/main.jsx \
+	esbuild frontend/main.jsx \
 		--jsx-import-source=bourbon-vanilla \
 		--jsx=automatic \
 		--bundle \
@@ -7,7 +11,7 @@ build:
 		--watch
 
 min:
-	esbuild src/main.jsx \
+	esbuild frontend/main.jsx \
 		--jsx-import-source=bourbon-vanilla \
 		--jsx=automatic \
 		--bundle \
@@ -16,4 +20,7 @@ min:
 		--watch
 
 serve:
-	python3 -m http.server 4000 --directory site
+	node backend/server.js
+
+db: 
+	mongosh "mongodb+srv://apricotdb.rsewf.mongodb.net/apricot_database" --apiVersion 1 --username charles

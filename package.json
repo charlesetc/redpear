@@ -1,7 +1,8 @@
 {
   "dependencies": {
-    "bourbon-vanilla": "^1.0.1",
+    "bourbon-vanilla": "file:../bourbon-vanilla",
     "esbuild": "0.16.13",
+    "express": "^4.18.2",
     "solid-js": "^1.6.6"
   }
 }

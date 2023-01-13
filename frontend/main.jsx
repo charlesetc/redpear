@@ -1,16 +1,16 @@
 import { createSignal, createEffect, onMount, on } from "solid-js";
-import { sethtml, insertAfter } from "./helpers.js";
+import { sethtml, insertAfter, creativeName } from "./helpers.js";
 
 let initialValue = {
   stack: {
     type: "vertical",
-    children: [
+    contents: [
       { text: { content: "apple" } },
       { text: { content: "banana" } },
       {
         stack: {
           type: "horizontal",
-          children: [
+          contents: [
             { text: { content: "pear" } },
             { text: { content: "orange" } },
             { button: { content: "submit" } },
@@ -23,12 +23,22 @@ let initialValue = {
 
 const [currentlySelected, setCurrentlySelected] = createSignal(null);
 
+let lastSelected = null;
+createEffect(
+  on(currentlySelected, (currentlySelected) => {
+    lastSelected?.classList?.remove("selected");
+    currentlySelected?.classList?.add("selected");
+    if (currentlySelected?.onSelected) currentlySelected.onSelected();
+    lastSelected = currentlySelected;
+  })
+);
+
 function box(div) {
-  let [margin, setMargin] = createSignal(10);
+  let [margin, setMargin] = createSignal(20);
   let [padding, setPadding] = createSignal(10);
-  let [borderWidth, setBorderWidth] = createSignal(0);
-  let [borderColor, setBorderColor] = createSignal("#666");
-  let [backgroundColor, setBackgroundColor] = createSignal("#e4f7d5");
+  let [borderWidth, setBorderWidth] = createSignal(1);
+  let [borderColor, setBorderColor] = createSignal("#ffdb29");
+  let [backgroundColor, setBackgroundColor] = createSignal();
   let [borderRadius, setBorderRadius] = createSignal(4);
 
   createEffect(() => {
@@ -41,6 +51,16 @@ function box(div) {
 
   createEffect(() => {
     div.style.border = `${borderWidth()}px solid ${borderColor()}`;
+    if (borderWidth() > 3) {
+      div.classList.remove("no-border");
+      div.classList.add("big-border");
+    } else if (borderWidth() <= 0) {
+      div.classList.remove("big-border");
+      div.classList.add("no-border");
+    } else {
+      div.classList.remove("no-border");
+      div.classList.remove("big-border");
+    }
   });
 
   createEffect(() => {
@@ -75,13 +95,13 @@ function box(div) {
 //   };
 // }
 
-function Stack({ children, type: initialType }) {
+function Stack({ contents, type: initialType }) {
   let label = <div class="label">stack</div>;
   // TODO: use properties on `div` to set type
   const [type, setType] = createSignal(initialType);
   let childElements = [];
-  for (let child of children) {
-    childElements.push(Value(child));
+  for (let child of contents) {
+    childElements.push(<Value {...child} />);
   }
 
   let div = (
@@ -99,9 +119,6 @@ function Stack({ children, type: initialType }) {
       {childElements}
     </div>
   );
-  createEffect(() =>
-    div.classList.toggle("selected", div === currentlySelected())
-  );
   createEffect(() => {
     div.classList.toggle("vertical", type() === "vertical");
     div.classList.toggle("horizontal", type() !== "vertical");
@@ -113,17 +130,96 @@ function Stack({ children, type: initialType }) {
   return div;
 }
 
-function Chooser({ lastInput }) {
-  let div;
+function Chooser({ lastSelected }) {
+  let div, input;
   function closeChooser() {
+    setCurrentlySelected(lastSelected);
     div.remove();
-    lastInput.focus();
   }
-  let input = <input type="text" onBlur={closeChooser} />;
-  let lines = [<div class="line">line 1</div>, <div class="line">line 2</div>];
-  div = <div class="chooser">{input}</div>;
+  let lines = [
+    <div class="line">stack</div>,
+    <div class="line">text</div>,
+    <div class="line">button</div>,
+  ];
+  let linesContainer = <div class="lines">{lines}</div>;
+  let filterLines = () =>
+    lines.filter((line) => line.textContent.includes(input.value));
+  input = (
+    <input
+      type="text"
+      onBlur={closeChooser}
+      onKeyDown={(e) => {
+        if (e.key === "Escape") {
+          e.preventDefault();
+          closeChooser();
+        } else if (e.key === "Backspace" && input.value === "") {
+          e.preventDefault();
+          closeChooser();
+        } else if (e.key === "Enter") {
+          e.preventDefault();
+          let results = filterLines();
+          if (results.length > 0) {
+            let choice = results[0];
+            if (choice.textContent === "stack") {
+              let stack = <Stack type="vertical" contents={[]} />;
+              insertAfter(div, stack);
+              div.remove();
+              setCurrentlySelected(stack);
+            } else if (choice.textContent === "text") {
+              let text = <Text content="" />;
+              insertAfter(div, text);
+              div.remove();
+              setCurrentlySelected(text);
+            } else if (choice.textContent === "button") {
+              let button = <Button content="submit" />;
+              insertAfter(div, button);
+              div.remove();
+              setCurrentlySelected(button);
+            }
+          }
+        }
+      }}
+      onKeyUp={(e) => {
+        // filter lines in chooser based on input
+        let value = e.target.value;
+        let results = filterLines();
+        if (results.length === 0) {
+          sethtml(linesContainer, <div>no results</div>);
+        } else {
+          sethtml(linesContainer, ...results);
+        }
+      }}
+    />
+  );
+
+  div = (
+    <div class="chooser">
+      {input}
+      {linesContainer}
+    </div>
+  );
+
+  setCurrentlySelected(null);
   setTimeout(() => input.focus(), 10);
   return div;
+}
+
+let controlPressed = false;
+function slashOpensChooser(e, div, input) {
+  console.log("wow", e, div, input);
+  if (e.key === "Control") {
+    controlPressed = true;
+  } else if (e.key === "\\" && !controlPressed) {
+    e.preventDefault();
+    console.log("here", div);
+    insertAfter(div, <Chooser lastSelected={div} />);
+  } else if (e.key === "\\" && controlPressed) {
+    let start = input.selectionStart;
+    let end = input.selectionEnd;
+    let value = input.value;
+    input.value = value.slice(0, start) + "\\" + value.slice(end);
+    input.selectionStart = input.selectionEnd = start + 1;
+  }
 }
 
 function Text({ content: initialContent }) {
@@ -141,34 +237,18 @@ function Text({ content: initialContent }) {
   input = (
     <textarea
       onFocus={() => setCurrentlySelected(div)}
-      onKeyDown={(e) => {
-        if (e.key === "Control") {
-          controlPressed = true;
-        } else if (e.key === "\\" && !controlPressed) {
-          e.preventDefault();
-          insertAfter(div, <Chooser lastInput={input} />);
-        } else if (e.key === "\\" && controlPressed) {
-          let start = input.selectionStart;
-          let end = input.selectionEnd;
-          let value = input.value;
-          input.value = value.slice(0, start) + "\\" + value.slice(end);
-          input.selectionStart = input.selectionEnd = start + 1;
-        }
-      }}
+      onKeyDown={(e) => slashOpensChooser(e, div, input)}
       onKeyUp={(e) => {
         if (e.key === "Control") {
           controlPressed = false;
         }
       }}
-      onInput={(e) => {
-        resizeToTextHeight();
-      }}
+      onInput={resizeToTextHeight}
     >
       {initialContent}
     </textarea>
   );
 
-  let controlPressed = false;
   div = (
     <div
       class="component text"
@@ -184,26 +264,31 @@ function Text({ content: initialContent }) {
       {input}
     </div>
   );
-  createEffect(() => {
-    div.classList.toggle("selected", div === currentlySelected());
-  });
   div.name = "text";
   // wait for it to mount...
   setTimeout(() => resizeToTextHeight(), 4);
   box(div);
+  div.onSelected = () => {
+    input.focus();
+    resizeToTextHeight();
+  };
+  div.input = input;
   return div;
 }
 
 function Button({ content: initialContent }) {
   let div, button, input;
   let [content, setContent] = createSignal(initialContent);
+  function editingMode() {
+    sethtml(div, input);
+    input.focus();
+    input.select();
+    resizeToTextWidth();
+  }
   function onFocus() {
     if (currentlySelected() !== div) {
       setCurrentlySelected(div);
-      sethtml(div, input);
-      input.focus();
-      input.select();
-      resizeToTextWidth();
+      editingMode();
     }
   }
   button = <button onFocus={onFocus}>{content()}</button>;
@@ -218,6 +303,7 @@ function Button({ content: initialContent }) {
     <input
       value={content()}
       onBlur={(e) => sethtml(div, button)}
+      onKeyDown={(e) => slashOpensChooser(e, div, input)}
       onInput={(e) => {
         setContent(e.target.value);
         resizeToTextWidth();
@@ -237,21 +323,21 @@ function Button({ content: initialContent }) {
       {button}
     </div>
   );
-  createEffect(() =>
-    div.classList.toggle("selected", div === currentlySelected())
-  );
   div.name = "button";
   box(div);
+  div.onSelected = () => {
+    editingMode();
+  };
   return div;
 }
 
 function Value(value) {
   if (value.stack) {
-    return Stack(value.stack);
+    return <Stack {...value.stack} />;
   } else if (value.text) {
-    return Text(value.text);
+    return <Text {...value.text} />;
   } else if (value.button) {
-    return Button(value.button);
+    return <Button {...value.button} />;
   } else {
     throw "no such element type";
   }
@@ -325,6 +411,59 @@ function BoxProperties() {
   );
 }
 
+function Var({ name }) {
+  let initialValue = "";
+  let input, textarea;
+  function resizeToTextHeight() {
+    textarea.style.height = 0 + "px";
+    textarea.style.height = textarea.scrollHeight - 20 + "px";
+  }
+  function resizeToTextWidth() {
+    input.style.width = 0 + "px";
+    input.style.width = Math.max(input.scrollWidth, 20) + "px";
+  }
+  textarea = <textarea onInput={resizeToTextHeight}>{initialValue}</textarea>;
+  // wait for it to mount...
+
+  input = (
+    <input
+      value={name}
+      onInput={(e) => {
+        resizeToTextWidth();
+      }}
+    />
+  );
+  let div = (
+    <div class="var">
+      let {input} = {textarea}
+    </div>
+  );
+
+  setTimeout(() => {
+    resizeToTextHeight();
+    resizeToTextWidth();
+  }, 4);
+  return div;
+}
+
+function LocalVars() {
+  let vars = <div class="vars"></div>;
+  function newVar() {
+    vars.appendChild(<Var name={creativeName()} />);
+  }
+  return (
+    <>
+      <p>
+        Local vars{" "}
+        <button onClick={newVar} class="new-var">
+          + new
+        </button>
+      </p>
+      {vars}
+    </>
+  );
+}
+
 function Properties({ currentlySelected }) {
   if (currentlySelected === null) {
     return <></>;
@@ -373,26 +512,49 @@ function Properties({ currentlySelected }) {
 }
 
 export default function Apricot() {
-  document.addEventListener("keyup", (e) => {
+  document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") setCurrentlySelected(null);
   });
 
-  let properties = <div class="properties"></div>;
-  createEffect(
-    on(currentlySelected, (currentlySelected) => {
-      sethtml(properties, <Properties currentlySelected={currentlySelected} />);
-    })
-  );
+  // let properties = <div class="properties"></div>;
+  // createEffect(
+  //   on(currentlySelected, (currentlySelected) => {
+  //     sethtml(properties, <Properties currentlySelected={currentlySelected} />);
+  //   })
+  // );
+
+  let hovered = null;
+  function setHovered(target) {
+    if (target.classList.contains("component") && target !== hovered) {
+      // TODO: Maybe do this with a timeout for the toplevel component or for lists?
+      hovered?.classList.remove("hovered");
+      target.classList.add("hovered");
+      hovered = target;
+    }
+  }
+
+  let value = <Value {...initialValue} />;
+  setCurrentlySelected(value);
 
   return (
     <>
-      <main>
+      <main onMouseMove={(e) => setHovered(e.target)}>
         <h1 class="title">Apricot</h1>
-        <div class="toplevel">
-          <Value {...initialValue} />
-        </div>
+        {/* <p>
+          Global vars <button class="new-var">+ new</button>
+        </p>
+        <div class="vars"></div>
+        <p>
+          User vars &nbsp;&nbsp;<button class="new-var">+ new</button>
+        </p> */}
+        <div class="vars"></div>
+        <LocalVars />
+        <br />
+        <p>Page</p>
+        <div class="toplevel">{value}</div>
       </main>
-      {properties}
+      <p style="display: none">hi</p>
+      {/* {properties} */}
     </>
   );
 }
@@ -400,3 +562,13 @@ export default function Apricot() {
 window.onload = () => {
   document.getElementById("root").appendChild(<Apricot />);
 };
+
+document.addEventListener("keydown", (e) => {
+  console.log(e.key);
+  if (e.key === "\\") {
+    e.preventDefault();
+    currentlySelected()?.appendChild(
+      <Chooser lastSelected={currentlySelected()} />
+    );
+  }
+});

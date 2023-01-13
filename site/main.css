@@ -1,5 +1,12 @@
+@font-face {
+  font-family: supply-sans;
+  src: url("/fonts/supply-mono-variable.ttf") format("truetype-variations");
+  font-weight: 1 999;
+}
+
 body {
-  font-family: -apple-system;
+  font-family: supply-sans, menlo;
+  font-weight: 300;
 }
 
 * {
@@ -29,7 +36,8 @@ button {
 }
 
 :root {
-  --highlight: rgb(39, 115, 255);
+  --highlight: rgb(0, 0, 0);
+  --selected-color: rgb(0, 0, 0);
 }
 
 .component.stack > .component {
@@ -42,14 +50,16 @@ button {
   padding: 10px;
 }
 
-.component:hover {
+.component.hover {
   outline: 1px solid var(--highlight);
 }
 
 .component.text textarea {
-  font-family: -apple-system;
+  font-family: supply-sans, menlo;
   letter-spacing: normal;
   font-size: 16px;
+  position: relative;
+  top: 2px;
   padding: 0;
   margin: 0;
   border: none;
@@ -60,14 +70,11 @@ button {
   resize: none;
   width: 100%;
   background-color: transparent;
+  font-weight: 300;
 }
 
 .component.button {
   text-align: center;
-}
-
-.component.button button {
-  padding: 5px 10px;
 }
 
 .component.button button,
@@ -77,6 +84,8 @@ button {
   outline: none;
   border: 1px solid #8f8f9d;
   border-radius: 4px;
+  font-family: supply-sans, menlo;
+  font-weight: 400;
 }
 
 .component.stack.horizontal {
@@ -86,7 +95,23 @@ button {
 }
 
 .component.selected {
-  outline: 2px solid rgb(39, 115, 255);
+  outline: 1px solid var(--selected-color);
+}
+
+.component.selected:not(.big-border) {
+  border-color: black !important;
+}
+
+.component.hovered:not(.big-border) {
+  border-color: black !important;
+}
+
+.component.hovered.big-border {
+  outline: 1px solid var(--highlight);
+}
+
+.component.hovered.no-border {
+  outline: 1px solid var(--highlight);
 }
 
 .component.stack {
@@ -94,26 +119,16 @@ button {
 }
 
 .component.stack .label {
-  display: none;
   position: absolute;
   top: 0px;
   transform: translateY(-50%);
-  border: rgb(39, 115, 255) 1px solid;
   background-color: white;
-  padding: 4px 8px;
-  font-family: Menlo;
-}
-
-.component.stack:hover > .label {
-  display: block;
+  padding: 0px 8px;
+  font-family: supply-sans, menlo;
 }
 
 .component.stack.selected > .label {
   display: block;
-}
-
-.component.stack.selected > .label {
-  border: rgb(39, 115, 255) 2px solid;
 }
 
 .toplevel {
@@ -149,8 +164,70 @@ main {
   display: block;
 }
 
-ul.chooser {
+.chooser {
   border: 2px solid black;
   background: white;
   max-width: 200px;
+  border-radius: 3px;
+  margin: 20px;
+}
+
+.chooser .lines > * {
+  margin: 5px;
+  padding: 5px;
+}
+
+.chooser input {
+  border: 0;
+  outline: 0;
+  padding: 10px 10px;
+  margin: 0px;
+  width: calc(100% - 10px * 2);
+  border-bottom: 2px solid black;
+  font-family: supply-sans, menlo;
+  font-size: 16px;
+}
+
+.chooser .line:nth-child(1) {
+  background: rgb(255, 237, 214);
+}
+
+.vars {
+  min-height: 1em;
+}
+
+.new-var {
+  padding: 2px 5px;
+  font-family: supply-sans, menlo;
+  font-weight: 400;
+}
+
+.var {
+  margin-top: 10px;
+}
+
+.var textarea {
+  /* input style to match */
+  border: 0;
+  outline: 0;
+  padding: 10px 10px;
+  margin: 0px;
+  width: calc(100% - 10px * 2);
+  border-left: 2px solid black;
+  margin-left: 20px;
+  font-family: supply-sans, menlo;
+  font-weight: 300;
+  font-size: 16px;
+  resize: none;
+}
+
+.var input {
+  /*  match style */
+
+  border: 0;
+  outline: 0;
+  /* border-bottom: 2px solid black; */
+  font-family: supply-sans, menlo;
+  font-weight: 300;
+  font-size: 16px;
 }
