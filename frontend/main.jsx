@@ -141,9 +141,12 @@ function Chooser({ lastSelected }) {
     <div class="line">text</div>,
     <div class="line">button</div>,
   ];
+
   let linesContainer = <div class="lines">{lines}</div>;
+
   let filterLines = () =>
     lines.filter((line) => line.textContent.includes(input.value));
+
   input = (
     <input
       type="text"
@@ -223,27 +226,45 @@ function slashOpensChooser(e, div, input) {
 }
 
 function Text({ content: initialContent }) {
-  let div, input;
+  let div, input, display;
 
-  function resizeToTextHeight() {
-    // input.focus();
-    input.style.height = 0;
-    input.style.height = input.scrollHeight + "px";
-    // TODO: this doesn't quite work.
-    // input.style.width =
-    //   input.parentNode.scrollWidth - (div.padding || (() => 0))() * 2 + "px";
+  function resizeToTextHeight(item) {
+    item.style.height = 0;
+    item.style.height = item.scrollHeight + "px";
   }
+
+  function editMode() {
+    setCurrentlySelected(div);
+    sethtml(div, input);
+    if (input !== document.activeElement) {
+      input.focus();
+      input.selectionStart = input.selectionEnd = input.value.length;
+    }
+    resizeToTextHeight(input);
+  }
+
+  function displayMode() {
+    display.innerHTML = input.value;
+    sethtml(div, display);
+    resizeToTextHeight(display);
+  }
+
+  display = (
+    <pre class="display" tabindex="0" onFocus={editMode}>
+      {initialContent}
+    </pre>
+  );
 
   input = (
     <textarea
-      onFocus={() => setCurrentlySelected(div)}
+      onBlur={displayMode}
       onKeyDown={(e) => slashOpensChooser(e, div, input)}
       onKeyUp={(e) => {
         if (e.key === "Control") {
           controlPressed = false;
         }
       }}
-      onInput={resizeToTextHeight}
+      onInput={() => resizeToTextHeight(input)}
     >
       {initialContent}
     </textarea>
@@ -252,25 +273,19 @@ function Text({ content: initialContent }) {
   div = (
     <div
       class="component text"
-      onClick={() => {
-        setCurrentlySelected(div);
-        if (input !== document.activeElement) {
-          input.focus();
-          input.selectionStart = input.selectionEnd = input.value.length;
-        }
-      }}
+      onClick={editMode}
       // style={boxStyles(self)}
     >
-      {input}
+      {display}
     </div>
   );
   div.name = "text";
   // wait for it to mount...
-  setTimeout(() => resizeToTextHeight(), 4);
+  setTimeout(() => resizeToTextHeight(input), 4);
+  setTimeout(() => resizeToTextHeight(display), 4);
   box(div);
   div.onSelected = () => {
-    input.focus();
-    resizeToTextHeight();
+    editMode();
   };
   div.input = input;
   return div;
@@ -279,18 +294,21 @@ function Text({ content: initialContent }) {
 function Button({ content: initialContent }) {
   let div, button, input;
   let [content, setContent] = createSignal(initialContent);
+
   function editingMode() {
     sethtml(div, input);
     input.focus();
     input.select();
     resizeToTextWidth();
   }
+
   function onFocus() {
     if (currentlySelected() !== div) {
       setCurrentlySelected(div);
       editingMode();
     }
   }
+
   button = <button onFocus={onFocus}>{content()}</button>;
 
   function resizeToTextWidth() {

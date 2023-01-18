@@ -54,9 +54,11 @@ button {
   outline: 1px solid var(--highlight);
 }
 
-.component.text textarea {
+.component.text textarea,
+.component.text .display {
   font-family: supply-sans, menlo;
   letter-spacing: normal;
+  /* line-height: 1rem; */
   font-size: 16px;
   position: relative;
   top: 2px;
@@ -66,11 +68,12 @@ button {
   outline: none;
   overflow-y: hidden;
   overflow-x: hidden;
-  white-space: word-wrap;
+  /* white-space: word-wrap; */
   resize: none;
   width: 100%;
   background-color: transparent;
   font-weight: 300;
+  word-wrap: break-word;
 }
 
 .component.button {
@@ -132,7 +135,7 @@ button {
 }
 
 .toplevel {
-  width: 60%;
+  width: 600px;
 }
 
 .component.text .tracking-span {
