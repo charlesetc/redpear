@@ -175,11 +175,12 @@ function Chooser({ lastSelected }) {
       onBlur={closeChooser}
       onKeyDown={(e) => {
         if (e.key === "Escape") {
-          e.preventDefault();
           closeChooser();
+          e.preventDefault();
         } else if (e.key === "Backspace" && input.value === "") {
-          e.preventDefault();
           closeChooser();
+          e.preventDefault();
+          e.stopPropagation();
         } else if (e.key === "Enter") {
           e.preventDefault();
           let results = filterLines();
@@ -344,6 +345,7 @@ function Button({ content: initialContent }) {
         if (e.key === "Backspace" && inputCursorAtBeginning(input)) {
           removeWidget(div);
           e.preventDefault(e);
+          e.stopPropagation();
         } else {
           slashOpensChooser(e, div, input);
         }
