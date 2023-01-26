@@ -790,6 +790,14 @@
       lastSelected = currentlySelected2;
     })
   );
+  function removeWidget(div) {
+    if (div.previousSibling) {
+      setCurrentlySelected(div.previousSibling);
+    } else {
+      setCurrentlySelected(div.parentNode);
+    }
+    div.remove();
+  }
   function box(div) {
     let [margin, setMargin] = createSignal(20);
     let [padding, setPadding] = createSignal(10);
@@ -836,25 +844,21 @@
     div.setBorderRadius = setBorderRadius;
   }
   function Stack({ contents, type: initialType }) {
-    let label = /* @__PURE__ */ jsx("div", { class: "label", children: "stack" });
     const [type, setType] = createSignal(initialType);
     let childElements = [];
     for (let child of contents) {
       childElements.push(/* @__PURE__ */ jsx(Value, { ...child }));
     }
-    let div = /* @__PURE__ */ jsxs(
+    let div = /* @__PURE__ */ jsx(
       "div",
       {
         class: "component stack",
         onClick: (e) => {
-          if (e.target === div || e.target === label) {
+          if (e.target === div) {
             setCurrentlySelected(div);
           }
         },
-        children: [
-          label,
-          childElements
-        ]
+        children: childElements
       }
     );
     createEffect(() => {
@@ -864,6 +868,10 @@
     div.setType = setType;
     div.type = type;
     div.name = "stack";
+    div.backspacePressed = (e) => {
+      removeWidget(div);
+      e.preventDefault();
+    };
     box(div);
     return div;
   }
@@ -937,12 +945,10 @@
   }
   var controlPressed = false;
   function slashOpensChooser(e, div, input) {
-    console.log("wow", e, div, input);
     if (e.key === "Control") {
       controlPressed = true;
     } else if (e.key === "\\" && !controlPressed) {
       e.preventDefault();
-      console.log("here", div);
       insertAfter(div, /* @__PURE__ */ jsx(Chooser, { lastSelected: div }));
     } else if (e.key === "\\" && controlPressed) {
       let start = input.selectionStart;
@@ -953,14 +959,13 @@
     }
   }
   function Text({ content: initialContent }) {
-    let div, input, display;
+    let div, input;
     function resizeToTextHeight(item) {
       item.style.height = 0;
       item.style.height = item.scrollHeight + "px";
     }
     function editMode() {
       setCurrentlySelected(div);
-      sethtml(div, input);
       if (input !== document.activeElement) {
         input.focus();
         input.selectionStart = input.selectionEnd = input.value.length;
@@ -968,16 +973,22 @@
       resizeToTextHeight(input);
     }
     function displayMode() {
-      display.innerHTML = input.value;
-      sethtml(div, display);
-      resizeToTextHeight(display);
+      resizeToTextHeight(input);
     }
-    display = /* @__PURE__ */ jsx("pre", { class: "display", tabindex: "0", onFocus: editMode, children: initialContent });
     input = /* @__PURE__ */ jsx(
       "textarea",
       {
+        onFocus: editMode,
         onBlur: displayMode,
-        onKeyDown: (e) => slashOpensChooser(e, div, input),
+        onKeyDown: (e) => {
+          e.stopPropagation();
+          if (e.key === "Backspace" && input.value === "") {
+            removeWidget(div);
+            e.preventDefault(e);
+          } else {
+            slashOpensChooser(e, div, input);
+          }
+        },
         onKeyUp: (e) => {
           if (e.key === "Control") {
             controlPressed = false;
@@ -992,12 +1003,11 @@
       {
         class: "component text",
         onClick: editMode,
-        children: display
+        children: input
       }
     );
     div.name = "text";
     setTimeout(() => resizeToTextHeight(input), 4);
-    setTimeout(() => resizeToTextHeight(display), 4);
     box(div);
     div.onSelected = () => {
       editMode();
@@ -1030,7 +1040,14 @@
       {
         value: content(),
         onBlur: (e) => sethtml(div, button),
-        onKeyDown: (e) => slashOpensChooser(e, div, input),
+        onKeyDown: (e) => {
+          if (e.key === "Backspace" && content() === "") {
+            removeWidget(div);
+            e.preventDefault(e);
+          } else {
+            slashOpensChooser(e, div, input);
+          }
+        },
         onInput: (e) => {
           setContent(e.target.value);
           resizeToTextWidth();
@@ -1150,6 +1167,8 @@
       currentlySelected()?.appendChild(
         /* @__PURE__ */ jsx(Chooser, { lastSelected: currentlySelected() })
       );
+    } else if (e.key === "Backspace") {
+      currentlySelected()?.backspacePressed(e);
     }
   });
 })();
