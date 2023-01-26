@@ -76,6 +76,15 @@ button {
   word-wrap: break-word;
 }
 
+.component.stack::before {
+  content: "stack";
+  position: absolute;
+  transform: translateY(-100%);
+  background-color: white;
+  padding: 0px 6px;
+  font-family: supply-sans, menlo;
+}
+
 .component.button {
   text-align: center;
 }
@@ -119,19 +128,6 @@ button {
 
 .component.stack {
   position: relative;
-}
-
-.component.stack .label {
-  position: absolute;
-  top: 0px;
-  transform: translateY(-50%);
-  background-color: white;
-  padding: 0px 8px;
-  font-family: supply-sans, menlo;
-}
-
-.component.stack.selected > .label {
-  display: block;
 }
 
 .toplevel {
