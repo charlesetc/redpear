@@ -615,6 +615,7 @@ document.addEventListener("keydown", (e) => {
       <Chooser lastSelected={currentlySelected()} />
     );
   } else if (e.key === "Backspace") {
-    currentlySelected()?.backspacePressed(e);
+    if (currentlySelected().backspacePressed)
+      currentlySelected().backspacePressed(e);
   }
 });
