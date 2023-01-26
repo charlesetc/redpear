@@ -33,6 +33,15 @@ createEffect(
   })
 );
 
+function removeWidget(div) {
+  if (div.previousSibling) {
+    setCurrentlySelected(div.previousSibling);
+  } else {
+    setCurrentlySelected(div.parentNode);
+  }
+  div.remove();
+}
+
 function box(div) {
   let [margin, setMargin] = createSignal(20);
   let [padding, setPadding] = createSignal(10);
@@ -96,7 +105,6 @@ function box(div) {
 // }
 
 function Stack({ contents, type: initialType }) {
-  let label = <div class="label">stack</div>;
   // TODO: use properties on `div` to set type
   const [type, setType] = createSignal(initialType);
   let childElements = [];
@@ -108,14 +116,13 @@ function Stack({ contents, type: initialType }) {
     <div
       class="component stack"
       onClick={(e) => {
-        if (e.target === div || e.target === label) {
+        if (e.target === div) {
           setCurrentlySelected(div);
         }
       }}
       // TODO: control styles
       // style={boxStyles(self)}
     >
-      {label}
       {childElements}
     </div>
   );
@@ -126,6 +133,10 @@ function Stack({ contents, type: initialType }) {
   div.setType = setType;
   div.type = type;
   div.name = "stack";
+  div.backspacePressed = (e) => {
+    removeWidget(div);
+    e.preventDefault();
+  };
   box(div);
   return div;
 }
@@ -209,12 +220,10 @@ function Chooser({ lastSelected }) {
 
 let controlPressed = false;
 function slashOpensChooser(e, div, input) {
-  console.log("wow", e, div, input);
   if (e.key === "Control") {
     controlPressed = true;
   } else if (e.key === "\\" && !controlPressed) {
     e.preventDefault();
-    console.log("here", div);
     insertAfter(div, <Chooser lastSelected={div} />);
   } else if (e.key === "\\" && controlPressed) {
     let start = input.selectionStart;
@@ -226,7 +235,7 @@ function slashOpensChooser(e, div, input) {
 }
 
 function Text({ content: initialContent }) {
-  let div, input, display;
+  let div, input;
 
   function resizeToTextHeight(item) {
     item.style.height = 0;
@@ -235,7 +244,6 @@ function Text({ content: initialContent }) {
 
   function editMode() {
     setCurrentlySelected(div);
-    sethtml(div, input);
     if (input !== document.activeElement) {
       input.focus();
       input.selectionStart = input.selectionEnd = input.value.length;
@@ -244,21 +252,22 @@ function Text({ content: initialContent }) {
   }
 
   function displayMode() {
-    display.innerHTML = input.value;
-    sethtml(div, display);
-    resizeToTextHeight(display);
+    resizeToTextHeight(input);
   }
-
-  display = (
-    <pre class="display" tabindex="0" onFocus={editMode}>
-      {initialContent}
-    </pre>
-  );
 
   input = (
     <textarea
+      onFocus={editMode}
       onBlur={displayMode}
-      onKeyDown={(e) => slashOpensChooser(e, div, input)}
+      onKeyDown={(e) => {
+        e.stopPropagation();
+        if (e.key === "Backspace" && input.value === "") {
+          removeWidget(div);
+          e.preventDefault(e);
+        } else {
+          slashOpensChooser(e, div, input);
+        }
+      }}
       onKeyUp={(e) => {
         if (e.key === "Control") {
           controlPressed = false;
@@ -276,13 +285,12 @@ function Text({ content: initialContent }) {
       onClick={editMode}
       // style={boxStyles(self)}
     >
-      {display}
+      {input}
     </div>
   );
   div.name = "text";
   // wait for it to mount...
   setTimeout(() => resizeToTextHeight(input), 4);
-  setTimeout(() => resizeToTextHeight(display), 4);
   box(div);
   div.onSelected = () => {
     editMode();
@@ -321,7 +329,14 @@ function Button({ content: initialContent }) {
     <input
       value={content()}
       onBlur={(e) => sethtml(div, button)}
-      onKeyDown={(e) => slashOpensChooser(e, div, input)}
+      onKeyDown={(e) => {
+        if (e.key === "Backspace" && content() === "") {
+          removeWidget(div);
+          e.preventDefault(e);
+        } else {
+          slashOpensChooser(e, div, input);
+        }
+      }}
       onInput={(e) => {
         setContent(e.target.value);
         resizeToTextWidth();
@@ -588,5 +603,7 @@ document.addEventListener("keydown", (e) => {
     currentlySelected()?.appendChild(
       <Chooser lastSelected={currentlySelected()} />
     );
+  } else if (e.key === "Backspace") {
+    currentlySelected()?.backspacePressed(e);
   }
 });
