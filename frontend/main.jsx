@@ -1,5 +1,10 @@
 import { createSignal, createEffect, onMount, on } from "solid-js";
-import { sethtml, insertAfter, creativeName } from "./helpers.js";
+import {
+  sethtml,
+  insertAfter,
+  creativeName,
+  inputCursorAtBeginning,
+} from "./helpers.js";
 
 let initialValue = {
   stack: {
@@ -37,7 +42,11 @@ function removeWidget(div) {
   if (div.previousSibling) {
     setCurrentlySelected(div.previousSibling);
   } else {
-    setCurrentlySelected(div.parentNode);
+    if (div.parentNode.classList.contains("component")) {
+      setCurrentlySelected(div.parentNode);
+    } else {
+      return;
+    }
   }
   div.remove();
 }
@@ -115,6 +124,8 @@ function Stack({ contents, type: initialType }) {
   let div = (
     <div
       class="component stack"
+      tabIndex="0"
+      onFocus={() => setCurrentlySelected(div)}
       onClick={(e) => {
         if (e.target === div) {
           setCurrentlySelected(div);
@@ -261,7 +272,7 @@ function Text({ content: initialContent }) {
       onBlur={displayMode}
       onKeyDown={(e) => {
         e.stopPropagation();
-        if (e.key === "Backspace" && input.value === "") {
+        if (e.key === "Backspace" && inputCursorAtBeginning(input)) {
           removeWidget(div);
           e.preventDefault(e);
         } else {
@@ -330,7 +341,7 @@ function Button({ content: initialContent }) {
       value={content()}
       onBlur={(e) => sethtml(div, button)}
       onKeyDown={(e) => {
-        if (e.key === "Backspace" && content() === "") {
+        if (e.key === "Backspace" && inputCursorAtBeginning(input)) {
           removeWidget(div);
           e.preventDefault(e);
         } else {

@@ -118,3 +118,7 @@ export function creativeName() {
   let number = Math.floor(Math.random() * 10);
   return word + number;
 }
+
+export function inputCursorAtBeginning(input) {
+  return input.selectionStart === 0 && input.selectionEnd === 0;
+}
