@@ -247,30 +247,23 @@ function slashOpensChooser(e, div, input) {
 }
 
 function Text({ content: initialContent }) {
-  let div, input;
+  let div, input, display;
+  let [mode, setMode] = createSignal("display");
 
-  function resizeToTextHeight(item) {
+  function resizeToTextHeight(item, offset = 0) {
     item.style.height = 0;
-    item.style.height = item.scrollHeight + "px";
+    item.style.height = item.scrollHeight + offset + "px";
   }
 
-  function editMode() {
-    setCurrentlySelected(div);
-    if (input !== document.activeElement) {
-      input.focus();
-      input.selectionStart = input.selectionEnd = input.value.length;
-    }
-    resizeToTextHeight(input);
-  }
-
-  function displayMode() {
-    resizeToTextHeight(input);
-  }
+  display = (
+    <div class="display" tabindex="0" onFocus={() => setMode("edit")}>
+      {initialContent}
+    </div>
+  );
 
   input = (
     <textarea
-      onFocus={editMode}
-      onBlur={displayMode}
+      onBlur={() => setMode("display")}
       onKeyDown={(e) => {
         e.stopPropagation();
         if (e.key === "Backspace" && inputCursorAtBeginning(input)) {
@@ -294,18 +287,43 @@ function Text({ content: initialContent }) {
   div = (
     <div
       class="component text"
-      onClick={editMode}
+      onClick={(e) => {
+        setMode("edit");
+      }}
       // style={boxStyles(self)}
     >
-      {input}
+      {display}
     </div>
   );
   div.name = "text";
+
+  createEffect(
+    on(mode, (mode) => {
+      div.classList.toggle("editing", mode === "edit");
+      if (mode === "edit") {
+        sethtml(div, input);
+        setCurrentlySelected(div);
+        if (input !== document.activeElement) {
+          input.focus();
+          input.selectionStart = input.selectionEnd = input.value.length;
+        }
+        resizeToTextHeight(input);
+      } else if (mode === "display") {
+        display.innerHTML = input.value;
+        sethtml(div, display);
+        resizeToTextHeight(display);
+      } else {
+        throw "invalid mode";
+      }
+    })
+  );
+
   // wait for it to mount...
   setTimeout(() => resizeToTextHeight(input), 4);
+  setTimeout(() => resizeToTextHeight(display), 4);
   box(div);
   div.onSelected = () => {
-    editMode();
+    setMode("edit");
   };
   div.input = input;
   return div;
@@ -552,7 +570,6 @@ function Properties({ currentlySelected }) {
       </>
     );
   } else {
-    debugger;
     throw "not a valid name";
   }
 }
@@ -610,14 +627,23 @@ window.onload = () => {
 };
 
 document.addEventListener("keydown", (e) => {
-  console.log(e.key);
   if (e.key === "\\") {
     e.preventDefault();
     currentlySelected()?.appendChild(
       <Chooser lastSelected={currentlySelected()} />
     );
   } else if (e.key === "Backspace") {
-    if (currentlySelected().backspacePressed)
+    if (currentlySelected() && currentlySelectedy().backspacePressed)
       currentlySelected().backspacePressed(e);
+  }
+});
+
+document.addEventListener("click", (e) => {
+  let toplevelValues = document.getElementsByClassName("toplevel");
+  let inAToplevel = Array.from(toplevelValues).some((value) =>
+    value.contains(e.target)
+  );
+  if (!inAToplevel) {
+    setCurrentlySelected(null);
   }
 });
