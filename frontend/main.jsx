@@ -6,6 +6,8 @@ import {
   inputCursorAtBeginning,
 } from "./helpers.js";
 
+import * as compiler from "./compiler.js";
+
 let initialValue = {
   stack: {
     type: "vertical",
@@ -247,85 +249,24 @@ function slashOpensChooser(e, div, input) {
 }
 
 function Text({ content: initialContent }) {
-  let div, input, display;
-  let [mode, setMode] = createSignal("display");
-
-  function resizeToTextHeight(item, offset = 0) {
-    item.style.height = 0;
-    item.style.height = item.scrollHeight + offset + "px";
-  }
-
-  display = (
-    <div class="display" tabindex="0" onFocus={() => setMode("edit")}>
-      {initialContent}
-    </div>
-  );
-
-  input = (
-    <textarea
-      onBlur={() => setMode("display")}
-      onKeyDown={(e) => {
-        e.stopPropagation();
-        if (e.key === "Backspace" && inputCursorAtBeginning(input)) {
-          removeWidget(div);
-          e.preventDefault(e);
-        } else {
-          slashOpensChooser(e, div, input);
-        }
-      }}
-      onKeyUp={(e) => {
-        if (e.key === "Control") {
-          controlPressed = false;
-        }
-      }}
-      onInput={() => resizeToTextHeight(input)}
-    >
-      {initialContent}
-    </textarea>
-  );
+  let div;
 
   div = (
     <div
       class="component text"
+      contentEditable="true"
+      onFocus={() => setCurrentlySelected(div)}
       onClick={(e) => {
         setMode("edit");
       }}
       // style={boxStyles(self)}
     >
-      {display}
+      {initialContent}
     </div>
   );
   div.name = "text";
 
-  createEffect(
-    on(mode, (mode) => {
-      div.classList.toggle("editing", mode === "edit");
-      if (mode === "edit") {
-        sethtml(div, input);
-        setCurrentlySelected(div);
-        if (input !== document.activeElement) {
-          input.focus();
-          input.selectionStart = input.selectionEnd = input.value.length;
-        }
-        resizeToTextHeight(input);
-      } else if (mode === "display") {
-        display.innerHTML = input.value;
-        sethtml(div, display);
-        resizeToTextHeight(display);
-      } else {
-        throw "invalid mode";
-      }
-    })
-  );
-
-  // wait for it to mount...
-  setTimeout(() => resizeToTextHeight(input), 4);
-  setTimeout(() => resizeToTextHeight(display), 4);
   box(div);
-  div.onSelected = () => {
-    setMode("edit");
-  };
-  div.input = input;
   return div;
 }
 
@@ -574,6 +515,46 @@ function Properties({ currentlySelected }) {
   }
 }
 
+function HistoryItem({ input, output }) {
+  return (
+    <div class="history-item">
+      <div class="input">{input}</div>
+
+      <div class="output">{output}</div>
+    </div>
+  );
+}
+
+function Repl() {
+  let history = <div class="history"></div>;
+  let input = (
+    <input
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          let input = e.target.value;
+          let output = JSON.stringify(compiler.compile(input));
+          console.log("💌", output);
+          history.appendChild(<HistoryItem input={input} output={output} />);
+          history.scrollBy(0, 10000);
+          e.target.value = "";
+        }
+      }}
+      onBlur={(e) => {
+        history.style.display = "none";
+      }}
+      onFocus={(e) => {
+        history.style.display = "block";
+      }}
+    ></input>
+  );
+  return (
+    <div class="repl">
+      {history}
+      {input}
+    </div>
+  );
+}
+
 export default function Apricot() {
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") setCurrentlySelected(null);
@@ -610,11 +591,12 @@ export default function Apricot() {
         <p>
           User vars &nbsp;&nbsp;<button class="new-var">+ new</button>
         </p> */}
-        <div class="vars"></div>
-        <LocalVars />
+        {/* <div class="vars"></div> */}
+        {/* <LocalVars /> */}
         <br />
         <p>Page</p>
         <div class="toplevel">{value}</div>
+        <Repl />
       </main>
       <p style="display: none">hi</p>
       {/* {properties} */}

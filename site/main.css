@@ -1,21 +1,25 @@
 @font-face {
-  font-family: supply-sans;
-  src: url("/fonts/supply-mono-variable.ttf") format("truetype-variations");
-  font-weight: 1 999;
+  font-family: minlo;
+  src: url("/fonts/minlo-font/Minlo-Regular.woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: minlo;
+  src: url("/fonts/minlo-font/Minlo-Bold.woff2");
+  font-weight: bold;
+  font-style: normal;
 }
 
 body {
-  font-family: supply-sans, menlo;
-  font-weight: 300;
+  font-family: menlo, minlo;
+  padding: 40px;
 }
 
 * {
   margin: 0;
   padding: 0;
-}
-
-body {
-  padding: 40px;
 }
 
 form,
@@ -56,10 +60,10 @@ button {
 
 .component.text textarea,
 .component.text .display {
-  font-family: supply-sans, menlo;
+  font-family: menlo, minlo;
   letter-spacing: normal;
-  /* line-height: 1rem; */
   font-size: 16px;
+  /* line-height: 1rem; */
   padding: 0;
   margin: 0;
   border: none;
@@ -70,7 +74,6 @@ button {
   resize: none;
   width: 100%;
   background-color: transparent;
-  font-weight: 300;
   word-wrap: break-word;
   white-space: pre-wrap;
 }
@@ -80,17 +83,14 @@ button {
   min-height: calc(1rem + 4px);
 }
 
-.component.text.editing {
-  padding-bottom: 7.1px !important;
-}
-
 .component.stack::before {
   content: "stack";
   position: absolute;
   transform: translateY(-100%);
   background-color: white;
   padding: 0px 6px;
-  font-family: supply-sans, menlo;
+  font-family: menlo, minlo;
+  font-style: italic;
 }
 
 .component.button {
@@ -104,8 +104,7 @@ button {
   outline: none;
   border: 1px solid #8f8f9d;
   border-radius: 4px;
-  font-family: supply-sans, menlo;
-  font-weight: 400;
+  font-family: menlo, minlo;
 }
 
 .component.stack.horizontal {
@@ -140,14 +139,6 @@ button {
 
 .toplevel {
   width: 600px;
-}
-
-.component.text .tracking-span {
-  position: fixed;
-  left: -2000px;
-  top: -2000px;
-  font-family: -apple-system;
-  font-size: 16px;
 }
 
 main {
@@ -191,7 +182,7 @@ main {
   margin: 0px;
   width: calc(100% - 10px * 2);
   border-bottom: 2px solid black;
-  font-family: supply-sans, menlo;
+  font-family: menlo, minlo;
   font-size: 16px;
 }
 
@@ -205,8 +196,7 @@ main {
 
 .new-var {
   padding: 2px 5px;
-  font-family: supply-sans, menlo;
-  font-weight: 400;
+  font-family: menlo, minlo;
 }
 
 .var {
@@ -222,8 +212,7 @@ main {
   width: calc(100% - 10px * 2);
   border-left: 2px solid black;
   margin-left: 20px;
-  font-family: supply-sans, menlo;
-  font-weight: 300;
+  font-family: menlo, minlo;
   font-size: 16px;
   resize: none;
 }
@@ -234,7 +223,49 @@ main {
   border: 0;
   outline: 0;
   /* border-bottom: 2px solid black; */
-  font-family: supply-sans, menlo;
-  font-weight: 300;
+  font-family: menlo, minlo;
   font-size: 16px;
+}
+
+.repl {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  border-top: 2px solid black;
+  z-index: 2;
+}
+
+.repl input {
+  padding: 20px;
+  outline: none;
+  width: 100%;
+  border: none;
+  font-family: menlo, minlo;
+  letter-spacing: normal;
+  font-size: 16px;
+}
+
+.history {
+  max-height: 30vh;
+  overflow: scroll;
+  border-bottom: 2px solid black;
+}
+
+.history:empty {
+  border: none;
+}
+
+.history-item:last-child {
+  padding-bottom: 20px;
+}
+
+.history-item {
+  padding: 5px;
+  padding-left: 20px;
+}
+
+.history-item:first-child {
+  padding-top: 20px;
 }

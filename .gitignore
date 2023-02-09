@@ -1,2 +1,3 @@
 node_modules/
 site/main.js
+.DS_Store
