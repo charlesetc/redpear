@@ -15,6 +15,7 @@
 body {
   font-family: menlo, minlo;
   padding: 40px;
+  font-size: 14px;
 }
 
 * {
@@ -58,24 +59,9 @@ button {
   outline: 1px solid var(--highlight);
 }
 
-.component.text textarea,
-.component.text .display {
-  font-family: menlo, minlo;
-  letter-spacing: normal;
-  font-size: 16px;
-  /* line-height: 1rem; */
-  padding: 0;
-  margin: 0;
-  border: none;
-  outline: none;
-  overflow-y: hidden;
-  overflow-x: hidden;
-  /* white-space: word-wrap; */
-  resize: none;
-  width: 100%;
-  background-color: transparent;
-  word-wrap: break-word;
+.component.text {
   white-space: pre-wrap;
+  outline: none;
 }
 
 .component.text,
@@ -183,7 +169,7 @@ main {
   width: calc(100% - 10px * 2);
   border-bottom: 2px solid black;
   font-family: menlo, minlo;
-  font-size: 16px;
+  font-size: inherit;
 }
 
 .chooser .line:nth-child(1) {
@@ -224,7 +210,7 @@ main {
   outline: 0;
   /* border-bottom: 2px solid black; */
   font-family: menlo, minlo;
-  font-size: 16px;
+  font-size: inherit;
 }
 
 .repl {
@@ -235,20 +221,22 @@ main {
   background-color: white;
   border-top: 2px solid black;
   z-index: 2;
+  font-size: 14px;
 }
 
 .repl input {
   padding: 20px;
+  padding-left: 38px;
   outline: none;
   width: 100%;
   border: none;
   font-family: menlo, minlo;
   letter-spacing: normal;
-  font-size: 16px;
+  font-size: inherit;
 }
 
 .history {
-  max-height: 30vh;
+  max-height: 40vh;
   overflow: scroll;
   border-bottom: 2px solid black;
 }
@@ -257,15 +245,32 @@ main {
   border: none;
 }
 
-.history-item:last-child {
-  padding-bottom: 20px;
+.history .output {
+  /* background-color: #eee; */
+  padding-top: 4px;
+  padding-bottom: 4px;
 }
 
-.history-item {
-  padding: 5px;
-  padding-left: 20px;
+.history .input:first-child {
+  padding-top: 12px;
 }
 
-.history-item:first-child {
-  padding-top: 20px;
+.history .input {
+  padding-top: 22px;
+  padding-bottom: 2px;
+}
+
+.history .input,
+.history .output {
+  padding-left: 14px;
+}
+
+.history .input::before {
+  content: "🍓 ";
+}
+
+.input-strawberry {
+  position: absolute;
+  left: 14px;
+  bottom: calc(12px + 1rem / 2);
 }

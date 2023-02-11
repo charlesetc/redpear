@@ -1,5 +1,5 @@
 import * as chevrotain from "chevrotain";
-const { createToken, CstParser } = chevrotain;
+const { createToken, EmbeddedActionsParser } = chevrotain;
 
 const Find = createToken({ name: "find", pattern: /find/ });
 const Add = createToken({ name: "add", pattern: /add/ });
@@ -34,48 +34,65 @@ const TOKENS = [
 ];
 const ApricotLexer = new chevrotain.Lexer(TOKENS);
 
-class ApricotCstParserSingleton extends CstParser {
+class ApricotParser extends EmbeddedActionsParser {
   constructor() {
     super(TOKENS);
     const $ = this;
 
     $.RULE("findClause", () => {
       $.CONSUME(Find);
-      $.CONSUME(ObjectName);
+      let objectName = $.CONSUME(ObjectName).image;
+      return {
+        find: {
+          objectName,
+        },
+      };
     });
 
     $.RULE("fieldAccessClause", () => {
-      $.CONSUME(FieldAccess);
+      let fieldAccess = $.CONSUME(FieldAccess).image;
+      return {
+        fieldAccess,
+      };
     });
 
     $.RULE("pipes", () => {
+      let pipes = [];
       $.AT_LEAST_ONE_SEP({
         SEP: Pipe,
         DEF: () => {
           $.OR([
             {
               ALT: () => {
-                $.SUBRULE($.findClause);
+                let find = $.SUBRULE($.findClause);
+                pipes.push(find);
               },
             },
             {
               ALT: () => {
-                $.SUBRULE($.fieldAccessClause);
+                let fieldAccess = $.SUBRULE($.fieldAccessClause);
+                pipes.push(fieldAccess);
               },
             },
           ]);
         },
       });
+      return {
+        pipes,
+      };
     });
 
     $.RULE("expression", () => {
-      $.SUBRULE($.pipes);
+      return $.SUBRULE($.pipes);
     });
 
     $.RULE("program", () => {
+      let program = [];
       $.MANY(() => {
-        $.SUBRULE($.expression);
+        let expression = $.SUBRULE($.expression);
+        program.push(expression);
       });
+      return program;
     });
 
     this.performSelfAnalysis();
@@ -83,11 +100,22 @@ class ApricotCstParserSingleton extends CstParser {
 }
 
 // only ever one instance of the parser
-const ApricotCSTParser = new ApricotCstParserSingleton();
+const parserInstance = new ApricotParser();
+
+function parse(input) {
+  let lexResult = ApricotLexer.tokenize(input);
+  if (lexResult.errors.length > 0) {
+    return { lexErrors: lexResult.errors };
+  }
+  parserInstance.input = lexResult.tokens;
+  const ast = parserInstance.expression();
+  if (parserInstance.errors.length > 0) {
+    return { parseErrors: parserInstance.errors };
+  }
+  console.log(ast);
+  return { success: ast };
+}
 
 export function compile(input) {
-  let lexResult = ApricotLexer.tokenize(input);
-  if (lexResult.errors) return { lexErrors: lexResult.errors };
-  parser.input = lexResult.tokens;
-  parser.program();
+  return parse(input);
 }

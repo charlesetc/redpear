@@ -4,6 +4,8 @@ import {
   insertAfter,
   creativeName,
   inputCursorAtBeginning,
+  contentEditableCursorAtBeginning,
+  insertTextAtCaret,
 } from "./helpers.js";
 
 import * as compiler from "./compiler.js";
@@ -29,6 +31,7 @@ let initialValue = {
 };
 
 const [currentlySelected, setCurrentlySelected] = createSignal(null);
+const [historyUp, setHistoryUp] = createSignal(false);
 
 let lastSelected = null;
 createEffect(
@@ -37,6 +40,7 @@ createEffect(
     currentlySelected?.classList?.add("selected");
     if (currentlySelected?.onSelected) currentlySelected.onSelected();
     lastSelected = currentlySelected;
+    if (currentlySelected) setHistoryUp(false);
   })
 );
 
@@ -158,7 +162,11 @@ function Chooser({ lastSelected }) {
   let div, input;
   function closeChooser() {
     setCurrentlySelected(lastSelected);
-    div.remove();
+    try {
+      div.remove();
+    } catch (e) {
+      console.log("error removing chooser", e);
+    }
   }
   let lines = [
     <div class="line">stack</div>,
@@ -191,17 +199,32 @@ function Chooser({ lastSelected }) {
             if (choice.textContent === "stack") {
               let stack = <Stack type="vertical" contents={[]} />;
               insertAfter(div, stack);
-              div.remove();
+              try {
+                div.remove();
+              } catch (e) {
+                console.log("error removing chooser", e);
+              }
+              window.getSelection().removeAllRanges();
               setCurrentlySelected(stack);
             } else if (choice.textContent === "text") {
               let text = <Text content="" />;
               insertAfter(div, text);
-              div.remove();
+              try {
+                div.remove();
+              } catch (e) {
+                console.log("error removing chooser", e);
+              }
+              window.getSelection().removeAllRanges();
               setCurrentlySelected(text);
             } else if (choice.textContent === "button") {
               let button = <Button content="submit" />;
               insertAfter(div, button);
-              div.remove();
+              try {
+                div.remove();
+              } catch (e) {
+                console.log("error removing chooser", e);
+              }
+              window.getSelection().removeAllRanges();
               setCurrentlySelected(button);
             }
           }
@@ -234,9 +257,7 @@ function Chooser({ lastSelected }) {
 
 let controlPressed = false;
 function slashOpensChooser(e, div, input) {
-  if (e.key === "Control") {
-    controlPressed = true;
-  } else if (e.key === "\\" && !controlPressed) {
+  if (e.key === "\\" && !controlPressed) {
     e.preventDefault();
     insertAfter(div, <Chooser lastSelected={div} />);
   } else if (e.key === "\\" && controlPressed) {
@@ -248,6 +269,19 @@ function slashOpensChooser(e, div, input) {
   }
 }
 
+function slashOpensChooserContentEditable(e, div) {
+  if (e.key === "\\" && !controlPressed) {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log("here now");
+    insertAfter(div, <Chooser lastSelected={div} />);
+  } else if (e.key === "\\" && controlPressed) {
+    insertTextAtCaret("\\");
+    e.preventDefault();
+    e.stopPropagation();
+  }
+}
+
 function Text({ content: initialContent }) {
   let div;
 
@@ -255,9 +289,23 @@ function Text({ content: initialContent }) {
     <div
       class="component text"
       contentEditable="true"
+      onClick={(e) => setCurrentlySelected(div)}
       onFocus={() => setCurrentlySelected(div)}
-      onClick={(e) => {
-        setMode("edit");
+      onKeyDown={(e) => {
+        if (e.key === "Backspace" && contentEditableCursorAtBeginning(div)) {
+          removeWidget(div);
+          e.preventDefault(e);
+          e.stopPropagation();
+        } else if (e.key === "Enter" && !e.customDispatch) {
+          const newEvent = new KeyboardEvent("keydown", { key: "Enter" });
+          newEvent.customDispatch = true;
+          div.dispatchEvent(newEvent);
+          // all the above just to run this code after the event:
+          // nothing yet, delete above if still around later
+        } else {
+          if (window.getSelection().type !== "None")
+            slashOpensChooserContentEditable(e, div);
+        }
       }}
       // style={boxStyles(self)}
     >
@@ -267,6 +315,20 @@ function Text({ content: initialContent }) {
   div.name = "text";
 
   box(div);
+  div.onSelected = () => {
+    const selection = window.getSelection();
+    if (!div.contains(selection.anchorNode) && div !== selection.anchorNode) {
+      console.log("doing the range thing!!");
+      const range = document.createRange();
+      let endIndex = div.lastChild ? div.lastChild.length : 0;
+      let endNode = div.lastChild || div;
+      range.setStart(endNode, endIndex);
+      range.setEnd(endNode, endIndex);
+      range.collapse(true);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+  };
   return div;
 }
 
@@ -306,7 +368,8 @@ function Button({ content: initialContent }) {
           e.preventDefault(e);
           e.stopPropagation();
         } else {
-          slashOpensChooser(e, div, input);
+          if (window.getSelection().type !== "None")
+            slashOpensChooser(e, div, input);
         }
       }}
       onInput={(e) => {
@@ -526,31 +589,61 @@ function HistoryItem({ input, output }) {
 }
 
 function Repl() {
+  let historyValues = [];
   let history = <div class="history"></div>;
+
+  createEffect(
+    on(historyUp, (historyUp) => {
+      if (historyUp) {
+        history.style.display = "block";
+      } else {
+        history.style.display = "none";
+      }
+    })
+  );
+
+  let historyIndex = 0;
   let input = (
     <input
       onKeyDown={(e) => {
         if (e.key === "Enter") {
+          historyIndex = 0;
           let input = e.target.value;
           let output = JSON.stringify(compiler.compile(input));
-          console.log("💌", output);
+          console.info("💌 message:", output);
+          historyValues.push({ input, output });
           history.appendChild(<HistoryItem input={input} output={output} />);
           history.scrollBy(0, 10000);
           e.target.value = "";
+        } else if (e.key === "ArrowUp") {
+          e.preventDefault();
+          if (historyIndex < historyValues.length) {
+            historyIndex += 1;
+            e.target.value = historyValues.at(-historyIndex).input;
+          }
+        } else if (e.key === "ArrowDown") {
+          e.preventDefault();
+          if (historyIndex > 1) {
+            historyIndex -= 1;
+            e.target.value = historyValues.at(-historyIndex).input;
+          } else if (historyIndex <= 1) {
+            historyIndex = 0;
+            e.target.value = "";
+          }
+        } else if (e.key === "Escape") {
+          input.blur();
+          setHistoryUp(false);
         }
       }}
-      onBlur={(e) => {
-        history.style.display = "none";
-      }}
       onFocus={(e) => {
-        history.style.display = "block";
+        setHistoryUp(true);
       }}
-    ></input>
+    />
   );
   return (
     <div class="repl">
       {history}
-      {input}
+      <span class="input-strawberry">🍓</span> {input}
     </div>
   );
 }
@@ -598,7 +691,6 @@ export default function Apricot() {
         <div class="toplevel">{value}</div>
         <Repl />
       </main>
-      <p style="display: none">hi</p>
       {/* {properties} */}
     </>
   );
@@ -609,14 +701,25 @@ window.onload = () => {
 };
 
 document.addEventListener("keydown", (e) => {
+  // Handle "\\" for stacks
   if (e.key === "\\") {
     e.preventDefault();
+
     currentlySelected()?.appendChild(
       <Chooser lastSelected={currentlySelected()} />
     );
   } else if (e.key === "Backspace") {
-    if (currentlySelected() && currentlySelectedy().backspacePressed)
+    if (currentlySelected() && currentlySelected().backspacePressed)
       currentlySelected().backspacePressed(e);
+  } else if (e.key === "Control") {
+    console.log(e.key);
+    controlPressed = true;
+  }
+});
+
+document.addEventListener("keyup", (e) => {
+  if (e.key === "Control") {
+    controlPressed = false;
   }
 });
 
@@ -627,5 +730,11 @@ document.addEventListener("click", (e) => {
   );
   if (!inAToplevel) {
     setCurrentlySelected(null);
+  }
+
+  let repl = document.getElementsByClassName("repl")[0];
+  let inRepl = repl.contains(e.target);
+  if (!inRepl) {
+    setHistoryUp(false);
   }
 });
