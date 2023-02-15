@@ -354,7 +354,6 @@ function Button({ content: initialContent }) {
 
   function resizeToTextWidth() {
     input.style.width = 0;
-    // TODO: this doesn't quite work.
     input.style.width = input.scrollWidth - 20 + "px";
   }
 
@@ -609,8 +608,15 @@ function Repl() {
         if (e.key === "Enter") {
           historyIndex = 0;
           let input = e.target.value;
-          let output = JSON.stringify(compiler.compile(input));
-          console.info("💌 message:", output);
+          let output = compiler.parse(input);
+          if (output.success) {
+            const ast = output.success;
+            output = compiler.evaluate_and_save(ast);
+            console.info("🐷 success:", ast, output);
+          } else {
+            console.error("🙈 errors:", output);
+          }
+          output = JSON.stringify(output);
           historyValues.push({ input, output });
           history.appendChild(<HistoryItem input={input} output={output} />);
           history.scrollBy(0, 10000);
@@ -633,6 +639,9 @@ function Repl() {
         } else if (e.key === "Escape") {
           input.blur();
           setHistoryUp(false);
+        } else if (e.key === "l" && e.ctrlKey) {
+          history.innerHTML = "";
+          historyIndex = 0;
         }
       }}
       onFocus={(e) => {
@@ -701,19 +710,31 @@ window.onload = () => {
 };
 
 document.addEventListener("keydown", (e) => {
-  // Handle "\\" for stacks
-  if (e.key === "\\") {
-    e.preventDefault();
-
-    currentlySelected()?.appendChild(
-      <Chooser lastSelected={currentlySelected()} />
-    );
-  } else if (e.key === "Backspace") {
-    if (currentlySelected() && currentlySelected().backspacePressed)
-      currentlySelected().backspacePressed(e);
-  } else if (e.key === "Control") {
-    console.log(e.key);
+  if (e.key === "Control") {
     controlPressed = true;
+  }
+  if (
+    e.key === "h" &&
+    e.ctrlKey &&
+    currentlySelected()?.parentNode.classList.contains("component")
+  ) {
+    let type = currentlySelected().parentNode.type();
+    let newType = type === "horizontal" ? "vertical" : "horizontal";
+    console.log(type, newType);
+    currentlySelected().parentNode.setType(newType);
+    e.preventDefault();
+  }
+  if (currentlySelected()?.name === "stack") {
+    if (e.key === "\\") {
+      e.preventDefault();
+
+      currentlySelected().appendChild(
+        <Chooser lastSelected={currentlySelected()} />
+      );
+    } else if (e.key === "Backspace") {
+      if (currentlySelected() && currentlySelected().backspacePressed)
+        currentlySelected().backspacePressed(e);
+    }
   }
 });
 
