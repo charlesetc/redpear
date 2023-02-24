@@ -31,7 +31,6 @@ let initialValue = {
 };
 
 const [currentlySelected, setCurrentlySelected] = createSignal(null);
-const [historyUp, setHistoryUp] = createSignal(false);
 
 let lastSelected = null;
 createEffect(
@@ -40,7 +39,6 @@ createEffect(
     currentlySelected?.classList?.add("selected");
     if (currentlySelected?.onSelected) currentlySelected.onSelected();
     lastSelected = currentlySelected;
-    if (currentlySelected) setHistoryUp(false);
   })
 );
 
@@ -633,86 +631,6 @@ function Properties({ currentlySelected }) {
   }
 }
 
-function HistoryItem({ input, output }) {
-  return (
-    <div class="history-item">
-      <div class="input">{input}</div>
-
-      <div class="output">{output}</div>
-    </div>
-  );
-}
-
-function Repl() {
-  let historyValues = [];
-  let history = <div class="history"></div>;
-
-  // createEffect(
-  //   on(historyUp, (historyUp) => {
-  //     if (historyUp) {
-  //       history.style.display = "block";
-  //     } else {
-  //       history.style.display = "none";
-  //     }
-  //   })
-  // );
-
-  let historyIndex = 0;
-  let input = (
-    <input
-      class="repl-input"
-      onKeyDown={(e) => {
-        if (e.key === "Enter") {
-          historyIndex = 0;
-          let input = e.target.value;
-          let output = compiler.parse(input);
-          if (output.success) {
-            const ast = output.success;
-            output = compiler.evaluate_and_save(ast);
-            console.info("🐷 success:", output);
-          } else {
-            console.error("🙈 errors:", output);
-          }
-          historyValues.push({ input, output });
-          history.appendChild(<HistoryItem input={input} output={output} />);
-          history.scrollBy(0, 10000);
-          e.target.value = "";
-        } else if (e.key === "ArrowUp") {
-          e.preventDefault();
-          if (historyIndex < historyValues.length) {
-            historyIndex += 1;
-            e.target.value = historyValues.at(-historyIndex).input;
-          }
-        } else if (e.key === "ArrowDown") {
-          e.preventDefault();
-          if (historyIndex > 1) {
-            historyIndex -= 1;
-            e.target.value = historyValues.at(-historyIndex).input;
-          } else if (historyIndex <= 1) {
-            historyIndex = 0;
-            e.target.value = "";
-          }
-        } else if (e.key === "Escape") {
-          input.blur();
-          setHistoryUp(false);
-        } else if (e.key === "l" && e.ctrlKey) {
-          history.innerHTML = "";
-          historyIndex = 0;
-        }
-      }}
-      onFocus={(e) => {
-        setHistoryUp(true);
-      }}
-    />
-  );
-  return (
-    <div class="repl">
-      {history}
-      <span class="input-strawberry">🍓</span> {input}
-    </div>
-  );
-}
-
 export default function Apricot() {
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") setCurrentlySelected(null);
@@ -754,7 +672,6 @@ export default function Apricot() {
         <br />
         <p>Page</p>
         <div class="toplevel">{value}</div>
-        <Repl />
       </main>
       {/* {properties} */}
     </>
@@ -808,10 +725,4 @@ document.addEventListener("click", (e) => {
   if (!inAToplevel) {
     setCurrentlySelected(null);
   }
-
-  let repl = document.getElementsByClassName("repl")[0];
-  let inRepl = repl.contains(e.target);
-  // if (!inRepl) {
-  // setHistoryUp(false);
-  // }
 });
