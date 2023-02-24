@@ -154,6 +154,12 @@ function Stack({ contents, type: initialType }) {
     removeWidget(div);
     e.preventDefault();
   };
+  div.ondblclick = (e) => {
+    if (e.target === div) {
+      let chooser = Chooser({ lastSelected: div });
+      div.appendChild(chooser);
+    }
+  };
   box(div);
   return div;
 }
@@ -168,10 +174,75 @@ function Chooser({ lastSelected }) {
       console.log("error removing chooser", e);
     }
   }
+
+  function insertStack() {
+    let stack = <Stack type="vertical" contents={[]} />;
+    insertAfter(div, stack);
+    try {
+      div.remove();
+    } catch (e) {
+      console.log("error removing chooser", e);
+    }
+    window.getSelection().removeAllRanges();
+    setCurrentlySelected(stack);
+  }
+
+  function insertText() {
+    let text = <Text content="" />;
+    insertAfter(div, text);
+    try {
+      div.remove();
+    } catch (e) {
+      console.log("error removing chooser", e);
+    }
+    window.getSelection().removeAllRanges();
+    setCurrentlySelected(text);
+  }
+
+  function insertButton() {
+    console.log("trying to insert a button!");
+    let button = <Button content="submit" />;
+    insertAfter(div, button);
+    try {
+      div.remove();
+    } catch (e) {
+      console.log("error removing chooser", e);
+    }
+    window.getSelection().removeAllRanges();
+    setCurrentlySelected(button);
+  }
+
   let lines = [
-    <div class="line">stack</div>,
-    <div class="line">text</div>,
-    <div class="line">button</div>,
+    <div
+      class="line"
+      onMouseDown={(e) => {
+        insertStack();
+        e.preventDefault();
+        e.stopPropagation();
+      }}
+    >
+      stack
+    </div>,
+    <div
+      class="line"
+      onMouseDown={(e) => {
+        insertText();
+        e.preventDefault();
+        e.stopPropagation();
+      }}
+    >
+      text
+    </div>,
+    <div
+      class="line"
+      onMouseDown={(e) => {
+        insertButton();
+        e.preventDefault();
+        e.stopPropagation();
+      }}
+    >
+      button
+    </div>,
   ];
 
   let linesContainer = <div class="lines">{lines}</div>;
@@ -197,35 +268,11 @@ function Chooser({ lastSelected }) {
           if (results.length > 0) {
             let choice = results[0];
             if (choice.textContent === "stack") {
-              let stack = <Stack type="vertical" contents={[]} />;
-              insertAfter(div, stack);
-              try {
-                div.remove();
-              } catch (e) {
-                console.log("error removing chooser", e);
-              }
-              window.getSelection().removeAllRanges();
-              setCurrentlySelected(stack);
+              insertStack();
             } else if (choice.textContent === "text") {
-              let text = <Text content="" />;
-              insertAfter(div, text);
-              try {
-                div.remove();
-              } catch (e) {
-                console.log("error removing chooser", e);
-              }
-              window.getSelection().removeAllRanges();
-              setCurrentlySelected(text);
+              insertText();
             } else if (choice.textContent === "button") {
-              let button = <Button content="submit" />;
-              insertAfter(div, button);
-              try {
-                div.remove();
-              } catch (e) {
-                console.log("error removing chooser", e);
-              }
-              window.getSelection().removeAllRanges();
-              setCurrentlySelected(button);
+              insertButton();
             }
           }
         }
@@ -282,6 +329,13 @@ function slashOpensChooserContentEditable(e, div) {
   }
 }
 
+function doubleClickOpensChooser(div) {
+  div.ondblclick = (e) => {
+    console.log("doubleclick");
+    insertAfter(div, <Chooser lastSelected={div} />);
+  };
+}
+
 function Text({ content: initialContent }) {
   let div;
 
@@ -315,6 +369,7 @@ function Text({ content: initialContent }) {
   div.name = "text";
 
   box(div);
+  doubleClickOpensChooser(div);
   div.onSelected = () => {
     const selection = window.getSelection();
     if (!div.contains(selection.anchorNode) && div !== selection.anchorNode) {
@@ -391,6 +446,7 @@ function Button({ content: initialContent }) {
     </div>
   );
   div.name = "button";
+  doubleClickOpensChooser(div);
   box(div);
   div.onSelected = () => {
     editingMode();
@@ -591,19 +647,20 @@ function Repl() {
   let historyValues = [];
   let history = <div class="history"></div>;
 
-  createEffect(
-    on(historyUp, (historyUp) => {
-      if (historyUp) {
-        history.style.display = "block";
-      } else {
-        history.style.display = "none";
-      }
-    })
-  );
+  // createEffect(
+  //   on(historyUp, (historyUp) => {
+  //     if (historyUp) {
+  //       history.style.display = "block";
+  //     } else {
+  //       history.style.display = "none";
+  //     }
+  //   })
+  // );
 
   let historyIndex = 0;
   let input = (
     <input
+      class="repl-input"
       onKeyDown={(e) => {
         if (e.key === "Enter") {
           historyIndex = 0;
@@ -612,11 +669,10 @@ function Repl() {
           if (output.success) {
             const ast = output.success;
             output = compiler.evaluate_and_save(ast);
-            console.info("🐷 success:", ast, output);
+            console.info("🐷 success:", output);
           } else {
             console.error("🙈 errors:", output);
           }
-          output = JSON.stringify(output);
           historyValues.push({ input, output });
           history.appendChild(<HistoryItem input={input} output={output} />);
           history.scrollBy(0, 10000);
@@ -712,8 +768,7 @@ window.onload = () => {
 document.addEventListener("keydown", (e) => {
   if (e.key === "Control") {
     controlPressed = true;
-  }
-  if (
+  } else if (
     e.key === "h" &&
     e.ctrlKey &&
     currentlySelected()?.parentNode.classList.contains("component")
@@ -723,8 +778,7 @@ document.addEventListener("keydown", (e) => {
     console.log(type, newType);
     currentlySelected().parentNode.setType(newType);
     e.preventDefault();
-  }
-  if (currentlySelected()?.name === "stack") {
+  } else if (currentlySelected()?.name === "stack") {
     if (e.key === "\\") {
       e.preventDefault();
 
@@ -735,6 +789,8 @@ document.addEventListener("keydown", (e) => {
       if (currentlySelected() && currentlySelected().backspacePressed)
         currentlySelected().backspacePressed(e);
     }
+  } else if (e.key === "Escape") {
+    setCurrentlySelected(null);
   }
 });
 
@@ -755,7 +811,7 @@ document.addEventListener("click", (e) => {
 
   let repl = document.getElementsByClassName("repl")[0];
   let inRepl = repl.contains(e.target);
-  if (!inRepl) {
-    setHistoryUp(false);
-  }
+  // if (!inRepl) {
+  // setHistoryUp(false);
+  // }
 });

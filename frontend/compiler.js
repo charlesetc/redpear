@@ -177,7 +177,6 @@ export function parse(input) {
   if (parserInstance.errors.length > 0) {
     return { parseErrors: parserInstance.errors };
   }
-  console.log(ast);
   return { success: ast };
 }
 
@@ -187,7 +186,7 @@ export function parse(input) {
 
 const ID = "_id";
 
-const store = [];
+const store = {};
 
 // TODO: this is broken. Multiple pipes don't work.
 function evaluate(ast) {
@@ -200,31 +199,31 @@ function evaluate(ast) {
       }
     }, []);
   } else if (ast.find) {
+    console.log("finding, store", store);
     return store[ast.find.objectName] || [];
-  } else if (ast.object) {
-    return [ast.object];
-  } else if (ast.string) {
-    return [ast.string];
-  } else if (ast.number) {
-    return [ast.number];
+  } else if (ast.object || ast.string || ast.number) {
+    return [ast];
   } else {
     throw new Error("Unknown expression");
   }
 }
 
+// TODO: definitely broken, doesn't save sub objects.
 function potentiallySaveResult(result) {
-  if (result.objectName && !result.args[ID]) {
-    console.log(result);
-    let newArgs = {};
-    for (const [field, arg] of Object.entries(result.args)) {
-      let newArg = potentiallySaveResult(arg);
-      newArgs[field] = newArg;
-    }
-    if (!store[result.objectName]) store[result.objectName] = [];
+  if (result.object && !result.object[ID]) {
+    console.log("store is ", store, result.object);
+    let { objectName, args } = result.object;
+    // let newArgs = {};
+    // for (const [field, arg] of Object.entries(result.args)) {
+    //   let newArg = potentiallySaveResult(arg);
+    //   newArgs[field] = newArg;
+    // }
+    if (!store[objectName]) store[objectName] = [];
     let id = Math.round(Math.random() * 10 ** 10);
-    result.args[ID] = id;
-    store[result.objectName].push(result.args);
-    store[id] = result.args;
+    result.object[ID] = id;
+    store[objectName].push(result);
+    // store[id] = result;
+    console.log("store is ", store);
     return id;
   } else {
     return result;
