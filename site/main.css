@@ -246,7 +246,7 @@ main {
 }
 
 .history {
-  /* max-height: 50vh; */
+  max-height: 50vh;
   height: 80vh;
   overflow: scroll;
   border-bottom: 2px solid black;
