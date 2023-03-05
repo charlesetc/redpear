@@ -1,0 +1,29 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 20px;
+  font-family: sans-serif;
+  max-width: 600px;
+}
+
+.main > * {
+  margin-block: 0;
+} 
+
+.main > * + * {
+  margin-block-start: var(--space, 1.5rem);
+}
+
+table {
+  border-collapse: true;
+}
+
+td, tr {
+  border: 2px solid black;
+  padding: 4px;
+}
+
+a, a:visited {
+  color: blue;
+}

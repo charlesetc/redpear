@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+
+    <title>Apricot</title>
+
+    <link
+      rel="shortcut icon"
+      type="image/ico"
+      href="/assets/favicon.ico"
+    />
+    <link rel="stylesheet" href="/minimal.css" />
+  </head>
+  <body>
+    <section class="main">
+      <h1 class="main-title">
+        Apricot
+      </h1>
+
+      <p>Hi and welcome! Feel free to get started here:</p>
+
+
+      <div class='log-in-form'>
+        <h2>Log In</h2>
+        <form method='POST' action='/log-in'>
+          <label>email: <input name='email' type='text' /></label>
+          <label>password: <input name='password' type='password' /></label>
+          <button type='submit'>Log in</button>
+        </form>
+      </div>
+
+      <div class='sign-up-form'>
+        <h2>Sign Up</h2>
+        <form method='POST' action='/sign-up'>
+          <label>email: <input name='email' type='text' /></label>
+          <label>password: <input name='password' type='password' /></label>
+          <button type='submit'>Sign up</button>
+        </form>
+      </div>
+    </section>
+  </body>
+</html>
