@@ -1,29 +1,57 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
 .main {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   padding: 20px;
   font-family: sans-serif;
+  font-size: 16px;
   max-width: 600px;
 }
 
-.main > * {
-  margin-block: 0;
-} 
+.main > * { 
+  margin-top: 10px
+}
 
-.main > * + * {
-  margin-block-start: var(--space, 1.5rem);
+
+.main > h1, .main > h2, .main > h3  {
+  margin-top: 24px
+}
+
+.main > p {
+  margin-top: 15px
 }
 
 table {
-  border-collapse: true;
+  border-collapse: collapse;
 }
 
-td, tr {
+th, td {
   border: 2px solid black;
-  padding: 4px;
+  padding: 6px;
+  width: 50%;
+}
+
+th {
+  /* font-weight: normal; */
+  font-size: 0.9em;
+  vertical-align: center;
+  background: lightgrey;
+  text-align: left;
 }
 
 a, a:visited {
   color: blue;
+}
+
+h1 {
+  font-size: 20px;
+}
+
+form label {
+  display: block;
 }

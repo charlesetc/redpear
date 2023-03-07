@@ -1,7 +1,6 @@
 require 'sinatra'
 require 'toml'
 require 'bcrypt'
-require 'mustache'
 require 'walnut'
 require_relative 'views.rb'
 require_relative 'utils.rb'
@@ -16,11 +15,14 @@ get '/' do
   if session[:user]
     user = current_user
     projects = :project.findmany({user:,}).sort_by { |p| p.created_at }
-    p [projects, user]
-    Views::Projects.render({user:, projects:})
+    Views::Projects::Index.render({user:, projects:})
   else
     Views::Landing.render
   end
+end
+
+get "/projects" do 
+  redirect("/")
 end
 
 def current_user
@@ -35,7 +37,7 @@ post '/sign-up' do
   if :user.findone({email:})
     return 'user already exists' 
   else
-    :user.({email:, password:, salt:, hash:})
+    :user.({email:, salt:, hash:})
     session[:user] = email
   end
   redirect('/')
@@ -52,7 +54,7 @@ post '/log-in' do
   user = :user.findone({email:})
   return 'incorrect email or password' unless user
 
-  hash = BCrypt::Engine::hash_secret(user.password, user.salt)
+  hash = BCrypt::Engine::hash_secret(password, user.salt)
   if user.hash == hash
     session[:user] = email
     redirect('/')
@@ -63,13 +65,18 @@ end
 
 post '/projects/new' do
   name = Utils.generate_name
-  project = :project.({name:, user: current_user})
-  redirect('/')
+  project = :project.({name:, user: current_user}) if current_user
+  redirect("/")
+  # redirect("/projects/#{project.id}")
 end
 
 get '/projects/:id' do
-  content_type :json 
   id = params[:id]
   project = :project.findone({id:,})
-  project.to_json
+  user = current_user
+  if project.user == current_user
+    Views::Projects::Overview.render({user:, project:,})
+  else
+    redirect('/')
+  end
 end

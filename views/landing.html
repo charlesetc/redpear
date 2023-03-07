@@ -7,39 +7,50 @@
 
     <title>Apricot</title>
 
-    <link
-      rel="shortcut icon"
-      type="image/ico"
-      href="/assets/favicon.ico"
-    />
+    <link rel="shortcut icon" type="image/ico" href="/assets/favicon.ico" />
     <link rel="stylesheet" href="/minimal.css" />
+    <link rel="stylesheet" href="/main.css" />
   </head>
   <body>
     <section class="main">
-      <h1 class="main-title">
-        Apricot
-      </h1>
+      <h1 class="main-title">Apricot</h1>
 
       <p>Hi and welcome! Feel free to get started here:</p>
 
+      <script>
+        const [onIsLogIn, setIsLogIn] = berryState(true);
+      </script>
 
-      <div class='log-in-form'>
-        <h2>Log In</h2>
-        <form method='POST' action='/log-in'>
-          <label>email: <input name='email' type='text' /></label>
-          <label>password: <input name='password' type='password' /></label>
-          <button type='submit'>Log in</button>
+      <div id="log-in-forms">
+        <h4 class="log-in" onclick="setIsLogIn(true)">Log In</h4>
+        <h4 class="sign-up" onclick="setIsLogIn(false)">Sign Up</h4>
+
+        <form class="log-inp" method="POST" action="/log-in">
+          <label>email: <input name="email" type="text" /></label>
+          <label>password: <input name="password" type="password" /></label>
+          <button type="submit">Log in</button>
+        </form>
+
+        <form id="" method="POST" action="/sign-up">
+          <label>email: <input name="email" type="text" /></label>
+          <label>password: <input name="password" type="password" /></label>
+          <button type="submit">Sign up</button>
         </form>
       </div>
 
-      <div class='sign-up-form'>
-        <h2>Sign Up</h2>
-        <form method='POST' action='/sign-up'>
-          <label>email: <input name='email' type='text' /></label>
-          <label>password: <input name='password' type='password' /></label>
-          <button type='submit'>Sign up</button>
-        </form>
-      </div>
+      <script>
+        onIsLogIn((isLogIn) => {
+          if (isLogIn) {
+            sign_up_form.style.display = "none";
+            log_in_form.style.display = "block";
+            sign_up_button.style.display = "none";
+            log_in_form.style.display = "block";
+          } else {
+            log_in_form.style.display = "none";
+            sign_up_form.style.display = "block";
+          }
+        });
+      </script>
     </section>
   </body>
 </html>

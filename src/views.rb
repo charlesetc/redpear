@@ -1,3 +1,5 @@
+require 'mustache'
+
 module Views
   def self.mustache(file)
     cls = Class.new(Mustache)
@@ -5,7 +7,10 @@ module Views
     cls.new
   end
 
-  Landing = mustache('views/landing.html')
-  Projects = mustache('views/projects.html')
+  Landing = Views.mustache('views/landing.html')
+  module Projects
+    Index = Views.mustache('views/projects/index.html')
+    Overview = Views.mustache('views/projects/overview.html')
+  end
 end
 

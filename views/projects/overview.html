@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+
+    <title>Apricot</title>
+
+    <link
+      rel="shortcut icon"
+      type="image/ico"
+      href="/assets/favicon.ico"
+    />
+    <link rel="stylesheet" href="/minimal.css" />
+  </head>
+  <body>
+    <section class="main">
+      <h1 class="main-title">
+        Apricot
+      </h1>
+
+      <h1>{{project.name}}</h1>
+
+      <p>Welcome {{user.email}}</p>
+
+      <h3>Views</h3>
+      <table>
+        <tr><th>name</th><th>type</th></tr>
+        <tr><td>index.html</td><td>html</td></tr>
+        <tr><td>user.html</td><td>html</td></tr>
+        <tr><td>project.html</td><td>fancy</td></tr>
+      </table>
+
+      <h3>Routes</h3>
+      <table>
+        <tr><th>name</th><th>method</th></tr>
+        <tr><td>index</td><td>get</td></tr>
+        <tr><td>render index</td><td>post</td></tr>
+      </table>
+
+      <h3>Functions</h3>
+      <table>
+        <tr><th>name</th><th>language</th></tr>
+        <tr><td>get_all_users</td><td>ruby</td></tr>
+        <tr><td>find_references</td><td>python</td></tr>
+      </table>
+
+    </section>
+  </body>
+</html>
