@@ -13,4 +13,3 @@ module Views
     Overview = Views.mustache('views/projects/overview.html')
   end
 end
-
