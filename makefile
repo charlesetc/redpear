@@ -1,14 +1,9 @@
-run: 
+run:
 	@tmux split-pane -v make build-js
 	@rerun rackup
 
 build-js:
-	esbuild frontend/main.jsx \
-		--jsx-import-source=bourbon-vanilla \
-		--jsx=automatic \
-		--bundle \
-		--outfile=site/main.js \
-		--watch
+	bash build_helpers/build_js.sh
 
-irb: 
+irb:
 	@bundle exec irb -r walnut

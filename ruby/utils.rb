@@ -163,11 +163,17 @@ module Utils
         ]
     end
 
-    def self.generate_name()
+    def self.generate_project_name()
         adjective = adjectives.shuffle.first
         article = articles.shuffle.first
         article = article == 'A' ? 'AEIOU'.include?(adjective[0]) ? "An" : "A" : article
         "#{article} #{adjective} #{nouns.shuffle.first}"
+    end
+
+    def self.generate_function_name()
+        adjective = adjectives.shuffle.first.downcase
+        noun = nouns.shuffle.first.downcase
+        "#{adjective}_#{noun}"
     end
 
     def self.nanoid(size: 21)

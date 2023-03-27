@@ -1,0 +1,45 @@
+.log-in-forms h4 {
+    display: inline-block;
+    cursor: pointer;
+    margin-top: 4px;
+    padding: 6px 8px;
+    margin-bottom: 4px;
+    border: 1px solid black;
+    margin-left: 0px;
+    margin-right: 0px;
+    user-select:none;
+    border-radius: 0px 4px 4px 0px;
+}
+
+.log-in-forms h4:first-child {
+    border-right: none;
+    border-radius: 4px 0px 0px 4px;
+}
+
+.log-in-forms h4.chosenTab {
+    background: #eee;
+}
+
+.log-in-forms h4:hover {
+    background: #aeaeae;
+}
+
+.log-in-forms h4:active {
+    background: #444;
+}
+
+.log-in-forms form {
+    display: block;
+}
+
+.log-in-forms form input {
+    display: block;
+    font-size: 16px;
+    padding: 4px 8px;
+    margin-top: 4px;
+}
+
+.log-in-forms form button {
+    margin-top: 6px;
+    font-weight: bold;
+}

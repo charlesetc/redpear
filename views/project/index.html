@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <title>Apricot</title>
+    <link rel="shortcut icon" type="image/ico" href="/assets/favicon.ico" />
+    <link rel="stylesheet" href="/basic.css" />
+</head>
+
+<body>
+    <section class="main">
+        <h1 class="main-title">
+            Apricot
+        </h1>
+
+        <p>Welcome {{user.email}} <a href='/log-out'>Log Out</a></p>
+
+        <h4>Projects</h4>
+        <table>
+            {{#projects}}
+            <tr>
+                <td><a href='/project/{{id}}'>{{name}}</a></td>
+            </tr>
+            {{/projects}}
+        </table>
+        <form method='post' action='/project/new'><button type='submit'>New Project</button></form>
+    </section>
+
+
+    {{#flash}}
+    <div id='flash'>
+        {{flash}}
+    </div>
+    {{/flash}}
+</body>
+
+</html>

@@ -1,0 +1,89 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+h2, h3, h4 {
+    font-size: 16px;
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background: #333;
+        color: #eee
+    }
+
+    table th {
+        background: black;
+        border-color: #eee;
+    }
+}
+
+body {
+    font-family: sans-serif;
+    font-size: 16px;
+}
+
+.main {
+  position: relative;
+  padding: 20px;
+  max-width: 600px;
+}
+
+.main > * {
+  margin-top: 10px
+}
+
+
+.main > h1, .main > h2, .main > h3, .main > h4 {
+  margin-top: 24px
+}
+
+.main > p {
+  margin-top: 15px
+}
+
+table {
+  border-collapse: collapse;
+}
+
+
+th, td {
+  padding: 6px;
+}
+
+th {
+  font-weight: normal;
+  border-bottom: 1px solid black;
+  vertical-align: center;
+  text-align: center;
+}
+
+a, a:visited {
+  color:#ff306e;
+}
+
+h1 {
+  font-size: 20px;
+}
+
+form label {
+  display: block;
+}
+
+button {
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 4px 8px;
+    cursor: pointer;
+}
+
+#flash {
+    border: 2px solid black;
+    padding: 20px;
+    position: fixed;
+    left: 20px;
+    bottom: 25px;
+    background: #efefef;
+    border-radius: 4px;
+}

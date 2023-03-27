@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <title>Apricot</title>
+
+    <link rel="shortcut icon" type="image/ico" href="/assets/favicon.ico" />
+    <link rel="stylesheet" href="/basic.css" />
+    <link rel="stylesheet" href="/editor.css" />
+    <script src="/js/main.js"></script>
+    <script src="/js/components/operations.js"></script>
+
+    <script>
+        const pageContext = {
+            fn: {{& function_blob}}
+        }
+
+        function init() {
+            const editor = document.getElementById('editor');
+            const view = instantiateEditor(editor);
+            editor.view = view;
+
+            setTimeout(removeFlash, 2000)
+        }
+
+        function removeFlash() {
+            document.getElementById('flash')?.remove()
+        }
+
+        document.addEventListener('DOMContentLoaded', init)
+    </script>
+</head>
+
+<body>
+    <section class="main">
+        <h1 class="main-title">
+            <a href='/'>Apricot</a>::<a href='/project/{{project.id}}'>{{project.name}}</a>::{{function.name}}
+        </h1>
+
+        <operations></operations>
+        <pre id='editor'>{{function.source}}</pre>
+    </section>
+
+    {{#flash}}
+    <div id='flash'>
+        {{flash}}
+    </div>
+    {{/flash}}
+</body>
+
+</html>

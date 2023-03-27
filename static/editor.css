@@ -1,0 +1,45 @@
+.cm-editor.cm-focused {
+    outline: none;
+}
+
+.cm-editor .cm-line {
+    font-family: iosevka;
+}
+
+.cm-editor {
+    margin-top: 14px;
+}
+
+.cm-editor .cm-gutters {
+    border:1px solid black;
+    border-radius: 3px;
+    margin-right: 5px;
+}
+
+.cm-editor .cm-lineNumbers .cm-gutterElement, .cm-editor .cm-lineNumbers .cm-activeLineGutter {
+    padding: 0px 4px 0px 4px;
+    color: black;
+    background:  #f5f5f5;
+    font-size: 0.9em;
+    position: relative;
+    top: 1px;
+    text-align: center
+}
+
+operations {
+    display: flex;
+    gap: 6px;
+}
+
+operations > * {
+    flex-sep
+}
+
+operations input {
+    border: none;
+    border-bottom: 1.5px solid black;
+    outline: none;
+    padding: 2px 0px;
+    font-family: iosevka;
+    font-size: 16px;
+}

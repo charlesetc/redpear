@@ -1,2 +1,4 @@
 .secrets.toml
 store/
+static/js/
+node_modules/

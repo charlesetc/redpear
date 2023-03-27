@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
@@ -9,48 +10,52 @@
 
     <link rel="shortcut icon" type="image/ico" href="/assets/favicon.ico" />
     <link rel="stylesheet" href="/minimal.css" />
-    <link rel="stylesheet" href="/main.css" />
-  </head>
-  <body>
+    <link rel="stylesheet" href="/landing.css" />
+</head>
+
+<body>
     <section class="main">
-      <h1 class="main-title">Apricot</h1>
+        <h1 class="main-title">Apricot</h1>
 
-      <p>Hi and welcome! Feel free to get started here:</p>
+        <p>Hi and welcome! Feel free to get started here:</p>
 
-      <script>
-        const [onIsLogIn, setIsLogIn] = berryState(true);
-      </script>
+        <script>
+            function showForm(id, clicked) {
+                let forms = document.querySelectorAll('.log-in-forms form');
+                for (const form of forms) {
+                    if (form.id === id) {
+                        form.style.display = 'block'
+                    } else {
+                        form.style.display = 'none'
+                    }
+                }
+                let old = document.querySelector('.chosenTab');
+                if (old) old.classList.remove('chosenTab');
+                clicked.classList.add('chosenTab')
+            }
+        </script>
 
-      <div id="log-in-forms">
-        <h4 class="log-in" onclick="setIsLogIn(true)">Log In</h4>
-        <h4 class="sign-up" onclick="setIsLogIn(false)">Sign Up</h4>
+        <div class="log-in-forms">
+            <h4 onclick="showForm('log-in', this)">Log In<h4 onclick="showForm('sign-up', this)">Sign Up</h4>
+            </h4>
 
-        <form class="log-inp" method="POST" action="/log-in">
-          <label>email: <input name="email" type="text" /></label>
-          <label>password: <input name="password" type="password" /></label>
-          <button type="submit">Log in</button>
-        </form>
+            <form id="log-in" method="POST" action="/log-in">
+                <input name="email" placeholder='email' type="text" />
+                <input name="password" placeholder='password' type="password" />
+                <button type="submit">Log in</button>
+            </form>
 
-        <form id="" method="POST" action="/sign-up">
-          <label>email: <input name="email" type="text" /></label>
-          <label>password: <input name="password" type="password" /></label>
-          <button type="submit">Sign up</button>
-        </form>
-      </div>
+            <form id="sign-up" method="POST" action="/sign-up">
+                <input name="email" placeholder='email' type="text" />
+                <input name="password" placeholder='password' type="password" />
+                <button type="submit">Sign up</button>
+            </form>
+        </div>
 
-      <script>
-        onIsLogIn((isLogIn) => {
-          if (isLogIn) {
-            sign_up_form.style.display = "none";
-            log_in_form.style.display = "block";
-            sign_up_button.style.display = "none";
-            log_in_form.style.display = "block";
-          } else {
-            log_in_form.style.display = "none";
-            sign_up_form.style.display = "block";
-          }
-        });
-      </script>
+        <script>
+            showForm('log-in', document.querySelector('.log-in-forms h4'))
+        </script>
     </section>
-  </body>
+</body>
+
 </html>

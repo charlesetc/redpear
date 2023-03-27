@@ -4,6 +4,8 @@ require 'bcrypt'
 require 'walnut'
 require_relative 'views.rb'
 require_relative 'utils.rb'
+require_relative 'functions.rb'
+require_relative 'projects.rb'
 
 SECRETS = TOML.load_file(".secrets.toml")
 
@@ -11,17 +13,43 @@ enable :sessions
 set :public_folder, "static"
 set :session_secret, SECRETS['session']
 
+
+module Sinatra
+  module Flash
+    def flash(message)
+      session[:flash] = message
+    end
+
+    def get_flash
+      flash = session[:flash]
+      session[:flash] = nil
+      return flash
+    end
+  end
+
+  module JSONParams
+    def json_params
+      begin
+        params.merge!(JSON.parse(request.body.read))
+      end
+    end
+  end
+
+  helpers Flash, JSONParams
+end
+
+
 get '/' do
   if session[:user]
     user = current_user
-    projects = :project.findmany(user: user).sort_by { |p| p.created_at }
-    Views::Projects::Index.render({user:, projects:})
+        projects = :project.findmany(user: user).sort_by { |p| p.created_at }
+        Views::Project::Index.render({user:, projects:, flash: get_flash})
   else
     Views::Landing.render
   end
 end
 
-get "/projects" do
+get "/project/?" do
   redirect("/")
 end
 
@@ -60,23 +88,5 @@ post '/log-in' do
     redirect('/')
   else
     return 'incorrect email or password'
-  end
-end
-
-post '/projects/new' do
-  name = Utils.generate_name
-  project = :project.(name:, user: current_user) if current_user
-  redirect("/")
-  # redirect("/projects/#{project.id}")
-end
-
-get '/projects/:id' do
-  id = params[:id]
-  project = :project.findone(id: id)
-  user = current_user
-  if project.user == current_user
-    Views::Projects::Overview.render({user:, project:,})
-  else
-    redirect('/')
   end
 end
