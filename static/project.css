@@ -1,0 +1,45 @@
+project-name {
+    position: relative;
+}
+
+project-name input, project-name .measure {
+    font-size: 20px;
+    font-family: sans-serif;
+    color: black;
+    font-weight: bold;
+    line-height: 1em !important;
+    border: none;
+    width: auto;
+    display: inline-block;
+    outline: none;
+}
+
+project-name button {
+    position: absolute;
+    right: -50px;
+    top: -3px;
+}
+
+.project-index li {
+    list-style: none;
+    padding-bottom: 6px;
+}
+
+project-operations {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 20px;
+}
+
+section:not(.main) > *:not(:first-child) {
+    margin-top: 10px;
+}
+
+
+section:not(.main) {
+    background: #f5f5f5;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 8px;
+    outline: 1px solid #bbb;
+}

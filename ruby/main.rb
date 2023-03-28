@@ -13,7 +13,6 @@ enable :sessions
 set :public_folder, "static"
 set :session_secret, SECRETS['session']
 
-
 module Sinatra
   module Flash
     def flash(message)
@@ -31,26 +30,12 @@ module Sinatra
     def json_params
       begin
         params.merge!(JSON.parse(request.body.read))
+      rescue
       end
     end
   end
 
   helpers Flash, JSONParams
-end
-
-
-get '/' do
-  if session[:user]
-    user = current_user
-        projects = :project.findmany(user: user).sort_by { |p| p.created_at }
-        Views::Project::Index.render({user:, projects:, flash: get_flash})
-  else
-    Views::Landing.render
-  end
-end
-
-get "/project/?" do
-  redirect("/")
 end
 
 def current_user

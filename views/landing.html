@@ -6,50 +6,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
 
-    <title>Apricot</title>
+    <title>Red Pear</title>
 
     <link rel="shortcut icon" type="image/ico" href="/assets/favicon.ico" />
-    <link rel="stylesheet" href="/minimal.css" />
+    <link rel="stylesheet" href="/basic.css" />
     <link rel="stylesheet" href="/landing.css" />
 </head>
 
 <body>
     <section class="main">
-        <h1 class="main-title">Apricot</h1>
-
-        <p>Hi and welcome! Feel free to get started here:</p>
-
-        <script>
-            function showForm(id, clicked) {
-                let forms = document.querySelectorAll('.log-in-forms form');
-                for (const form of forms) {
-                    if (form.id === id) {
-                        form.style.display = 'block'
-                    } else {
-                        form.style.display = 'none'
-                    }
+        <div class='pear-img'>
+            <script>
+                function randomInt(max) {
+                    return Math.floor(Math.random() * max);
                 }
-                let old = document.querySelector('.chosenTab');
-                if (old) old.classList.remove('chosenTab');
-                clicked.classList.add('chosenTab')
-            }
-        </script>
+                const pearp = document.querySelector('.pear-img')
+                const img = document.createElement('img');
+                const a = document.createAttribute('src');
+                a.value = `/images/pear${randomInt(3) + 1}.jpg`;
+                img.setAttributeNode(a);
+                pearp.appendChild(img);
+            </script>
 
-        <div class="log-in-forms">
-            <h4 onclick="showForm('log-in', this)">Log In<h4 onclick="showForm('sign-up', this)">Sign Up</h4>
-            </h4>
+            <noscript>
+                <img src="/images/pear2.jpg">
+            </noscript>
+        </div>
 
-            <form id="log-in" method="POST" action="/log-in">
-                <input name="email" placeholder='email' type="text" />
-                <input name="password" placeholder='password' type="password" />
-                <button type="submit">Log in</button>
-            </form>
+        <div class='pear-text'>
 
-            <form id="sign-up" method="POST" action="/sign-up">
-                <input name="email" placeholder='email' type="text" />
-                <input name="password" placeholder='password' type="password" />
-                <button type="submit">Sign up</button>
-            </form>
+            <h1 class="main-title">Red Pear <span class='emoji'>🍐</span></h1>
+
+            <p>Hi and welcome!</p>
+
+
+            <p>Red Pear is a cloud programming platform unlike any other.</p>
+
+            <p>Get started here:</p>
+
+
+            <script>
+                function showForm(id, clicked) {
+                    let forms = document.querySelectorAll('.log-in-forms form');
+                    for (const form of forms) {
+                        if (form.id === id) {
+                            form.style.display = 'block'
+                        } else {
+                            form.style.display = 'none'
+                        }
+                    }
+                    let old = document.querySelector('.chosenTab');
+                    if (old) old.classList.remove('chosenTab');
+                    clicked.classList.add('chosenTab')
+                }
+            </script>
+
+            <div class="log-in-forms">
+                <h4 onclick="showForm('log-in', this)">Log In<h4 onclick="showForm('sign-up', this)">Sign Up</h4>
+                </h4>
+
+                <form id="log-in" method="POST" action="/log-in">
+                    <input name="email" placeholder='email' type="text" />
+                    <input name="password" placeholder='password' type="password" />
+                    <button type="submit">Log in</button>
+                </form>
+
+                <form id="sign-up" method="POST" action="/sign-up">
+                    <input name="email" placeholder='email' type="text" />
+                    <input name="password" placeholder='password' type="password" />
+                    <button type="submit">Sign up</button>
+                </form>
+            </div>
+
         </div>
 
         <script>

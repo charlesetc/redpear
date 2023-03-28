@@ -5,55 +5,72 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <title>Apricot</title>
+    <title>Red Pear</title>
 
     <link rel="shortcut icon" type="image/ico" href="/assets/favicon.ico" />
     <link rel="stylesheet" href="/basic.css" />
+    <link rel="stylesheet" href="/project.css" />
+
+    <script>
+        const pageContext = {
+            project: {{& project_blob}}
+        }
+    </script>
+    <script src='/js/main.js'></script>
+    <script src='/js/components/project-name.js'></script>
+    <script src='/js/components/project-operations.js'></script>
 </head>
 
 <body>
     <section class="main">
         <h1 class="main-title">
-            <a href='/'>Apricot</a>::{{project.name}}
+            <a href='/'>Red Pear</a>::<project-name></project-name>
         </h1>
 
-        <p>Welcome {{user.email}}</p>
+        <project-operations></project-operations>
 
-        <h3>Views</h3>
-        <table>
-            <tr>
-                <th>name</th>
-                <th>type</th>
-            </tr>
-            {{#views}}
-            <tr>
-                <td>{{name}}</td>
-                <td>{{type}}</td>
-            </tr>
-            {{/views}}
+        <p>Welcome {{user.email}} <a href='/log-out'>Log out</a></p>
 
-        </table>
-        <form method='post' action='/views/new'><button type='submit'>New</button></form>
+        <section>
+            <h3>Functions</h3>
+            <table id='functions-index'>
+                <tr>
+                    <th>name</th>
+                    <th>route</th>
+                </tr>
+                {{#functions}}
+                <tr>
+                    <td><a href="/function/{{id}}">{{name}}</a></td>
+                    <td>{{route}}</td>
+                </tr>
+                {{/ functions}}
+            </table>
+            <form method='post' action='/function/new'>
+                <input type="hidden" value="{{project.id}}" name="project_id" />
+                <button type='submit'>New</button>
+            </form>
+        </section>
 
-        <h3>Functions</h3>
-        <table>
-            <tr>
-                <th>name</th>
-            </tr>
-            {{#functions}}
-            <tr>
-                <td><a href="/function/{{id}}">{{name}}</a></td>
-            </tr>
-            {{/functions}}
-        </table>
-        <form method='post' action='/function/new'>
-            <input type="hidden" value="{{project.id}}" name="project_id" />
-            <button type='submit'>New</button>
-        </form>
+        <section>
+            <h3>Views</h3>
+            <table>
+                <tr>
+                    <th>name</th>
+                    <th>type</th>
+                </tr>
+                {{#views}}
+                <tr>
+                    <td>{{name}}</td>
+                    <td>{{type}}</td>
+                </tr>
+                {{/ views}}
+            </table>
+            <form method='post' action='/views/new'><button type='submit'>New</button></form>
+        </section>
 
-
-        <h3>Data</h3>
-
+        <section>
+            <h3>Data</h3>
+        </section>
     </section>
 </body>
 

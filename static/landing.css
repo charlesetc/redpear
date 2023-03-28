@@ -9,6 +9,7 @@
     margin-right: 0px;
     user-select:none;
     border-radius: 0px 4px 4px 0px;
+    font-size: 14px;
 }
 
 .log-in-forms h4:first-child {
@@ -34,7 +35,7 @@
 
 .log-in-forms form input {
     display: block;
-    font-size: 16px;
+    font-size: 14px;
     padding: 4px 8px;
     margin-top: 4px;
 }
@@ -42,4 +43,59 @@
 .log-in-forms form button {
     margin-top: 6px;
     font-weight: bold;
+    font-size: 14px;
+}
+
+.pear-img img {
+    max-width: 300px;
+    float: right;
+}
+
+body {
+    padding-top: 13vh;
+}
+
+.main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row-reverse;
+}
+
+.pear-text > *:not(:first-child) {
+    margin-top: 10px;
+}
+
+.main-title .emoji {
+    color: transparent;
+    text-shadow: 0px 0px 0px var(--accent);
+    padding-left: 2px;
+}
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 15px;
+        padding-top: 10px;
+    }
+
+    .main {
+        flex-direction: column-reverse;
+        align-items: baseline;
+    }
+
+    .pear-img img {
+        margin-top: 20px;
+    }
+}
+
+@media (max-width: 330px) {
+
+    .pear-img img {
+        width: 100vw;
+        position: absolute;
+        z-index: -1;
+        top: 315px;
+        left: -15px;
+    }
 }

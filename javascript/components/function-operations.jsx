@@ -1,18 +1,29 @@
 import { createSignal, createEffect } from "solid-js";
 
-function Operations() {
-  let [routeMode, setRouteMode] = createSignal(pageContext.fn.route !== "");
-  let routeButton = <button onClick={() => setRouteMode(true)}>Add Route</button>;
-  let routeInput = (
+
+function RouteInput({ setRouteMode }) {
+  const self = (
     <input
       onBlur={() => {
-        if (routeInput.value === "") {
+        if (self.value === "") {
           setRouteMode(false)
         }
-        fetchPost('/function/edit', { id: pageContext.fn.id, route: routeInput.value })
+        fetchPost('/function/edit', { id: pageContext.fn.id, route: self.value })
+      }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') {
+          e.target.blur()
+        }
       }}
       type='text' placeholder='Route' value={pageContext.fn.route} />
-  );
+  )
+  return self
+}
+
+function FunctionOperations() {
+  let [routeMode, setRouteMode] = createSignal(pageContext.fn.route !== "");
+  let routeButton = <button onClick={() => setRouteMode(true)}>Add Route</button>;
+  let routeInput = <RouteInput setRouteMode={setRouteMode} />
 
   createEffect(() => {
     if (routeMode()) {
@@ -25,7 +36,7 @@ function Operations() {
     }
   })
 
-  function saveApricotEditor() {
+  function saveEditor() {
     const editor = document.getElementById('editor');
     formPost('/function/edit', {
       source: editor.view.state.doc,
@@ -46,9 +57,9 @@ function Operations() {
       {routeButton}
       {routeInput}
       <button onclick={maybeDeleteFunction}>Delete</button>
-      <button onclick={saveApricotEditor}>Save</button>
+      <button onclick={saveEditor}>Save</button>
     </>
   )
 }
 
-document.hotwire(Operations)
+document.hotwire(FunctionOperations)

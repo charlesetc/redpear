@@ -48,7 +48,8 @@ end
 
 post '/function/edit' do
   json_params
-  function = get_function(params[:id])
+  id = params[:id]
+  function = get_function(id)
   function.source = params[:source] if params[:source]
   function.route = params[:route] if params[:route]
   flash 'Saved successfully'

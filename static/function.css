@@ -1,3 +1,6 @@
+
+/* Code Mirror-specific styles */
+
 .cm-editor.cm-focused {
     outline: none;
 }
@@ -26,20 +29,20 @@
     text-align: center
 }
 
-operations {
+/* General Styles */
+
+
+.main function-operations {
     display: flex;
     gap: 6px;
+    margin-bottom: 20px;
 }
 
-operations > * {
-    flex-sep
-}
-
-operations input {
+function-operations input {
     border: none;
-    border-bottom: 1.5px solid black;
     outline: none;
-    padding: 2px 0px;
     font-family: iosevka;
     font-size: 16px;
+    border: 1px solid black;
+    border-radius: 0px 3px 3px 0px;
 }
