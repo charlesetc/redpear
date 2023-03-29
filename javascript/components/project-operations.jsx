@@ -1,6 +1,5 @@
 let doneButton = <button style='display:none'>Done</button>
 
-
 function createNameInput() {
   const measure = <pre class='measure'></pre>
 
@@ -69,6 +68,8 @@ function ProjectOperations() {
     <>
       <button onclick={maybeDeleteFunction}>Delete</button>
       <button onclick={() => nameInput.focus()}>Rename</button>
+      <button>Project URL</button>
+      <button>Deploy</button>
     </>
   )
 }

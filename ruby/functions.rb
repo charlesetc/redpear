@@ -15,9 +15,10 @@ post '/function/new' do
       project:,
       name:,
       source: empty_function(name),
-      route: "",
+      route: nil,
+      method: nil,
       arguments: [],
-      deleted: false
+      deleted: false,
     )
     redirect back
 end
@@ -49,9 +50,11 @@ end
 post '/function/edit' do
   json_params
   id = params[:id]
+  p params, params.key?(:route)
   function = get_function(id)
-  function.source = params[:source] if params[:source]
-  function.route = params[:route] if params[:route]
+  function.source = params[:source] if params.key?(:source)
+  function.route = params[:route] if params.key?(:route)
+  function.method = params[:method] if params.key?(:method)
   flash 'Saved successfully'
   redirect back
 end

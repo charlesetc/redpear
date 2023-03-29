@@ -29,8 +29,9 @@ module Sinatra
   module JSONParams
     def json_params
       begin
-        params.merge!(JSON.parse(request.body.read))
-      rescue
+        params.merge!(JSON.parse(request.body.read).transform_keys { |k| k.to_sym })
+      rescue Exception => e
+        p "LOG: Ignoring #{e}"
       end
     end
   end

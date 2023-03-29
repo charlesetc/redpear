@@ -8,7 +8,7 @@
 
     <title>Red Pear</title>
 
-    <link rel="shortcut icon" type="image/ico" href="/assets/favicon.ico" />
+    <link rel="shortcut icon" type="image/ico" href="/favicon.ico" />
     <link rel="stylesheet" href="/basic.css" />
     <link rel="stylesheet" href="/landing.css" />
 </head>
@@ -40,7 +40,7 @@
             <p>Hi and welcome!</p>
 
 
-            <p>Red Pear is a cloud programming platform unlike any other.</p>
+            <p>Red Pear is a cloud programming platform unlike any other. Open source, easy-to-use, kind.</p>
 
             <p>Get started here:</p>
 
@@ -62,7 +62,7 @@
             </script>
 
             <div class="log-in-forms">
-                <h4 onclick="showForm('log-in', this)">Log In<h4 onclick="showForm('sign-up', this)">Sign Up</h4>
+                <h4 onclick="showForm('sign-up', this)">Sign Up<h4 onclick="showForm('log-in', this)">Log In</h4>
                 </h4>
 
                 <form id="log-in" method="POST" action="/log-in">
@@ -77,11 +77,14 @@
                     <button type="submit">Sign up</button>
                 </form>
             </div>
+            <br />
+
+
 
         </div>
 
         <script>
-            showForm('log-in', document.querySelector('.log-in-forms h4'))
+            showForm('sign-up', document.querySelector('.log-in-forms h4'))
         </script>
     </section>
 </body>

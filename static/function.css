@@ -43,6 +43,10 @@ function-operations input {
     outline: none;
     font-family: iosevka;
     font-size: 16px;
-    border: 1px solid black;
-    border-radius: 0px 3px 3px 0px;
+    padding-left: 8px;
+}
+
+.cm-editor ::selection {
+    background: var(--accent);
+    color: white;
 }

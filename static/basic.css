@@ -57,6 +57,7 @@ table {
 
 th, td {
     padding-right: 6px;
+    min-width: 100px;
 }
 
 th {
@@ -87,6 +88,16 @@ button {
     background: #f5f5f5;
 }
 
+select {
+    font-size:13px;
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 3px 6px;
+    padding-right: 0px;
+    cursor: pointer;
+    background: #f5f5f5;
+}
+
 #flash {
     border: 2px solid black;
     padding: 20px;
@@ -107,4 +118,9 @@ button {
     position: fixed;
     left: -9000px;
     top: -9000px;
+}
+
+::selection {
+    background: var(--accent);
+    color: white;
 }
