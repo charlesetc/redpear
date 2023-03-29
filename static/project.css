@@ -43,3 +43,7 @@ section:not(.main) {
     border-radius: 8px;
     outline: 1px solid #bbb;
 }
+
+.main section .nothing-msg {
+    margin-top: 25px;
+}
