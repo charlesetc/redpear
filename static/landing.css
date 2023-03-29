@@ -71,6 +71,11 @@ body {
     padding-left: 2px;
 }
 
+.main-title .emoji::selection {
+    color: transparent !important;
+    text-shadow: 0px 0px 0px black;
+}
+
 @media (max-width: 600px) {
 
     body {
