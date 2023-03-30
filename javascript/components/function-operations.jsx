@@ -83,7 +83,6 @@ function FunctionOperations() {
     const editor = document.getElementById('editor');
     formPost('/function/edit', {
       source: editor.view.state.doc,
-      route: routeEditor.value(),
       id: pageContext.fn.id,
     })
   }

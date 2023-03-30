@@ -52,20 +52,20 @@
         </section>
 
         <section>
-            <h3>Views</h3>
+            <h3>Templates</h3>
             <table>
                 <tr>
                     <th>name</th>
                     <th>type</th>
                 </tr>
-                {{#views}}
+                {{#templates}}
                 <tr>
                     <td>{{name}}</td>
                     <td>{{type}}</td>
                 </tr>
-                {{/ views}}
+                {{/templates}}
             </table>
-            <form method='post' action='/views/new'><button type='submit'>New</button></form>
+            <form method='post' action='/templates/new'><button type='submit'>New</button></form>
         </section>
 
         <section>
