@@ -30,40 +30,68 @@ body {
 }
 
 .main {
-  position: relative;
-  padding: 20px;
-  max-width: 600px;
-  margin: auto;
+    position: relative;
+    padding: 20px;
+    max-width: 600px;
+    margin: auto;
 }
 
 .main > * {
-  margin-top: 10px
+    margin-top: 10px
+}
+
+.main section > *:not(:first-child) {
+    margin-top: 10px
 }
 
 
 .main > h1, .main > h2, .main > h3, .main > h4 {
-  margin-top: 24px
+    margin-top: 24px
 }
 
 .main > p {
-  margin-top: 15px
+    margin-top: 15px
 }
 
+
 table {
-    border-spacing: 10px;
+    margin-top: 16px;
+    margin-bottom: 10px;
     position: relative;
-    right: 9px;
+    left: -2px;
 }
 
 th, td {
     padding-right: 6px;
     min-width: 100px;
+    border-right: 16px solid transparent;
+}
+
+td {
+    padding-top: 4px
 }
 
 th {
   font-weight: normal;
-  border-bottom: 1px solid black;
   text-align: center;
+  position: relative;
+}
+
+th::before {
+    content:"";
+    display: block;
+    position: absolute;
+    width: 100%;
+    border-bottom: 1px solid black;
+    height: 1rem;
+}
+
+tr:nth-child(2) td {
+    padding-top: 6px;
+}
+
+a:hover {
+    color: black !important;
 }
 
 
@@ -86,6 +114,16 @@ button {
     padding: 3px 6px;
     cursor: pointer;
     background: #f5f5f5;
+    position: relative;
+}
+
+button:hover {
+    background: #ccc;
+}
+
+button:active {
+    background: black;
+    color: white;
 }
 
 select {
@@ -106,12 +144,6 @@ select {
     bottom: 25px;
     background: #efefef;
     border-radius: 4px;
-}
-
-#functions-index td {
-    font-family: iosevka;
-    padding-bottom: 0px;
-    font-size: 15px;
 }
 
 .measure {

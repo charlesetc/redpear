@@ -38,9 +38,14 @@ end
 get '/project/:id' do
   project = get_project(params[:id])
   functions = :function.findmany(project: project, deleted: false).sort_by { |p| p.created_at }
-  project_blob = project.to_json_full
   user = current_user
-  Views::Project::Show.render({user:, project:, project_blob:, functions:,})
+  Views::Project::Show.render({
+    user:,
+    project:,
+    project_blob: project.to_json_full,
+    functions:,
+    functions_blob: functions.map {|x| x.to_hash}.to_json,
+  })
 end
 
 post '/project/edit' do

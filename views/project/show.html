@@ -12,9 +12,9 @@
     <link rel="stylesheet" href="/project.css" />
 
     <script>
-        const pageContext = {
-            project: {{& project_blob}}
-        }
+        const pageContext = {}
+        pageContext.project = {{& project_blob}}
+        pageContext.functions = {{& functions_blob}}
     </script>
     <script src='/js/main.js'></script>
     <script src='/js/components/project-operations.js'></script>
@@ -30,24 +30,10 @@
 
         <p>Welcome {{user.email}} <a href='/log-out'>Log out</a></p>
 
-        <section>
+
+        <section class='functions-index'>
             <h3>Functions</h3>
-            <table id='functions-index'>
-                <tr>
-                    <th>name</th>
-                    <th>route</th>
-                </tr>
-                {{#functions}}
-                <tr>
-                    <td><a href="/function/{{id}}">{{name}}</a></td>
-                    <td>{{route}}</td>
-                </tr>
-                {{/ functions}}
-            </table>
-            <form method='post' action='/function/new'>
-                <input type="hidden" value="{{project.id}}" name="project_id" />
-                <button type='submit'>New</button>
-            </form>
+            <functions-table></functions-table>
         </section>
 
         <section>

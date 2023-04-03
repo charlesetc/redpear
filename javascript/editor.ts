@@ -208,4 +208,4 @@ async function saveEditor() {
 
 window.saveEditor = saveEditor
 
-window.addEventListener('beforeunload', saveEditor)
+// window.addEventListener('beforeunload', saveEditor)

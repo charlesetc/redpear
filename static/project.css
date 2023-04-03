@@ -35,17 +35,66 @@ section:not(.main) > *:not(:first-child) {
     margin-top: 10px;
 }
 
-
 section:not(.main) {
     background: #f8f8f8;
     background: #f5f5f5;
     background: #fbfbfb;
     padding: 20px;
     margin-top: 26px;
-    border-radius: 8px;
-    outline: 1px solid #bbb;
+    border-radius: 3px;
+    outline: 1px solid black;
 }
 
 .main section .nothing-msg {
     margin-top: 25px;
+}
+
+
+.main section form button {
+    position: relative;
+    left: -1px;
+}
+
+.functions-index td {
+    font-family: iosevka;
+    font-size: 15px;
+}
+
+.functions-index tr input {
+    border: none;
+    outline: none;
+    font-family: iosevka;
+    font-size: 16px;
+    margin-left: 8px;
+    background: transparent;
+}
+
+.functions-index tr input:focus + .close-button {
+    opacity: 1;
+}
+
+.route-editor .close-button {
+    opacity: 0;
+}
+
+.route-editor:hover .close-button {
+    opacity: 1;
+}
+
+.route-editor .method {
+    text-transform: uppercase;
+    display: inline-block;
+    width: 4ch;
+}
+
+tr .add-route {
+    opacity: 0;
+}
+
+table:not(.route-editor-focused) tr:hover .add-route  {
+    opacity: 1;
+}
+
+.add-route:hover {
+    opacity: 1;
 }

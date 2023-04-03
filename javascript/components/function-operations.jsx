@@ -1,8 +1,7 @@
-import { createSignal, createEffect } from "solid-js";
 
-function editFunction(update) {
-  update.id = pageContext.fn.id;
-  fetchPost('/function/edit', update)
+
+function editFunction(route) {
+  fetchPost('/function/edit', { route, id: pageContext.fn.id })
 }
 
 function RouteEditor({ setRouteMode }) {
@@ -10,7 +9,7 @@ function RouteEditor({ setRouteMode }) {
     <input
       onBlur={(e) => {
         if (e.relatedTarget !== closeButton) {
-          editFunction({ route: input.value, method: method.value })
+          editFunction({ pattern: input.value, method: method.value })
         }
       }}
       onKeyDown={(e) => {
@@ -18,16 +17,16 @@ function RouteEditor({ setRouteMode }) {
           e.target.blur()
         }
       }}
-      type='text' placeholder='Route' value={pageContext.fn.route || "/"} />
+      type='text' placeholder='Route' value={pageContext.fn.route ? pageContext.fn.route.pattern : "/"} />
   )
   const closeButton = (
     <button class='close-button' onClick={() => {
       setRouteMode(false);
-      editFunction({ route: null, method: null })
+      editFunction(null)
     }}>x</button>
   );
   const method = (
-    <select onChange={() => editFunction({ method: method.value })}>
+    <select onChange={() => editFunction({ pattern: input.value, method: method.value })}>
       <option value='get'>GET</option>
       <option value='post'>POST</option>
     </select>
@@ -39,9 +38,9 @@ function RouteEditor({ setRouteMode }) {
   }
   let self = (
     <div class='route-editor'>
+      {closeButton}
       {method}
       {input}
-      {closeButton}
     </div>
   )
   self.value = () => input.value
@@ -62,7 +61,7 @@ function FunctionOperations() {
 
   let addRoute = <button onClick={() => {
     setRouteMode(true);
-    editFunction({ route: routeEditor.value(), method: routeEditor.method() })
+    editFunction({ pattern: routeEditor.value(), method: routeEditor.method() })
   }}>Add Route</button>;
 
 
@@ -78,7 +77,7 @@ function FunctionOperations() {
   })
 
   function maybeDeleteFunction() {
-    if (confirm("This will delete this function. Are you sure")) {
+    if (confirm("This will delete this function. Are you sure?")) {
       formPost('/function/delete', { id: pageContext.fn.id });
     }
   }

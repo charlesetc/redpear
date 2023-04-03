@@ -44,6 +44,7 @@ function-operations input {
     font-family: iosevka;
     font-size: 16px;
     padding-left: 8px;
+    background: transparent;
 }
 
 .close-button {
