@@ -4,9 +4,10 @@ import {
   dropCursor,
   rectangularSelection,
   crosshairCursor,
-  EditorView,
   highlightActiveLineGutter,
   lineNumbers,
+  EditorView,
+  ViewPlugin
 } from "@codemirror/view";
 // import { autocompletion } from "@codemirror/autocomplete";
 import { StreamLanguage } from "@codemirror/language"
@@ -29,6 +30,7 @@ import {
 } from "@codemirror/autocomplete";
 import { lintKeymap } from "@codemirror/lint";
 import { tags as t } from "@lezer/highlight";
+
 
 let birchTheme = EditorView.theme(
   {
@@ -155,11 +157,32 @@ export const functionSetup: Extension = [
   ]),
 ];
 
+
+let saveOnBlur =
+  ViewPlugin.fromClass(
+    class {
+      constructor(_) { }
+
+      update() { }
+    },
+    {
+      eventHandlers: {
+        blur: (e, view) => {
+          fetchPost('/function/edit', {
+            source: view.state.doc.toString(),
+            id: pageContext.fn.id,
+          })
+        },
+      },
+    }
+  );
+
 export function instantiateEditor(editor: Element) {
   const source = editor.textContent!;
   editor.textContent = "";
   let extensions = [
     functionSetup,
+    saveOnBlur,
     StreamLanguage.define(ruby),
     keymap.of([indentWithTab])
   ];
@@ -172,3 +195,17 @@ export function instantiateEditor(editor: Element) {
   });
   return view
 }
+
+
+async function saveEditor() {
+  const editor = document.getElementById('editor')!;
+  await fetchPost('/function/edit', {
+    source: editor.view.state.doc.toString(),
+    id: pageContext.fn.id,
+  })
+  // debugger
+}
+
+window.saveEditor = saveEditor
+
+window.addEventListener('beforeunload', saveEditor)

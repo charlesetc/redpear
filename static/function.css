@@ -46,6 +46,14 @@ function-operations input {
     padding-left: 8px;
 }
 
+.close-button {
+    visibility: hidden;
+}
+
+.route-editor:hover .close-button {
+    visibility: visible;
+}
+
 .cm-editor ::selection {
     background: var(--accent);
     color: white;

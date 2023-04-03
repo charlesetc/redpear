@@ -37,9 +37,11 @@ section:not(.main) > *:not(:first-child) {
 
 
 section:not(.main) {
+    background: #f8f8f8;
     background: #f5f5f5;
+    background: #fbfbfb;
     padding: 20px;
-    margin-top: 20px;
+    margin-top: 26px;
     border-radius: 8px;
     outline: 1px solid #bbb;
 }

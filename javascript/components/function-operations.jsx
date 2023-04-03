@@ -5,8 +5,6 @@ function editFunction(update) {
   fetchPost('/function/edit', update)
 }
 
-console.log(pageContext.fn)
-
 function RouteEditor({ setRouteMode }) {
   const input = (
     <input
@@ -23,7 +21,7 @@ function RouteEditor({ setRouteMode }) {
       type='text' placeholder='Route' value={pageContext.fn.route || "/"} />
   )
   const closeButton = (
-    <button onClick={() => {
+    <button class='close-button' onClick={() => {
       setRouteMode(false);
       editFunction({ route: null, method: null })
     }}>x</button>
@@ -40,7 +38,7 @@ function RouteEditor({ setRouteMode }) {
     }
   }
   let self = (
-    <div class='routeEditor'>
+    <div class='route-editor'>
       {method}
       {input}
       {closeButton}
@@ -79,14 +77,6 @@ function FunctionOperations() {
     }
   })
 
-  function saveEditor() {
-    const editor = document.getElementById('editor');
-    formPost('/function/edit', {
-      source: editor.view.state.doc,
-      id: pageContext.fn.id,
-    })
-  }
-
   function maybeDeleteFunction() {
     if (confirm("This will delete this function. Are you sure")) {
       formPost('/function/delete', { id: pageContext.fn.id });
@@ -99,7 +89,6 @@ function FunctionOperations() {
       {addRoute}
       {routeEditor}
       <button onclick={maybeDeleteFunction}>Delete</button>
-      <button onclick={saveEditor}>Save</button>
     </>
   )
 }
