@@ -159,15 +159,15 @@ function FunctionRow(fn) {
 
   return (
     <tr>
-      <td><a href={`/function/${fn.id}`}>{fn.name}</a></td>
+      <td class='function-name' onClick={() => formPost('/function/open', { id: fn.id })}>
+        <a>{fn.name}</a>
+        <button class='delete-fn' onclick={() => maybeDeleteFunction(fn)}>x</button>
+      </td>
       <td>
         {routeEditor}
         {addRouteButton}
       </td>
-      {/* <td>
-        <button class='delete-fn' onclick={() => maybeDeleteFunction(fn)}>Delete</button>
-        </td> */}
-    </tr>
+    </tr >
   )
 }
 

@@ -67,18 +67,15 @@ th, td {
     border-right: 16px solid #fbfbfb;
 }
 
-td a {
-    display: inline-block;
-    width: 100%;
-}
-
 td {
     padding-top: 2px;
 }
 
-tr:hover {
+/*
+tr:not(:first-child):hover {
     background: #eee;
 }
+*/
 
 th {
   font-weight: normal;
@@ -95,8 +92,8 @@ th::before {
     height: 1rem;
 }
 
-tr:nth-child(2) td {
-    padding-top: 6px;
+tr:nth-child(1) th {
+    padding-bottom: 6px;
 }
 
 a:hover {
