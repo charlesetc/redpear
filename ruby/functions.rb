@@ -18,7 +18,6 @@ post '/function/new' do
       route: nil,
       arguments: [],
       deleted: false,
-      open: false,
     )
     redirect back
 end
@@ -60,11 +59,5 @@ end
 post '/function/delete' do
   function = get_function(params[:id])
   function.deleted = true
-  redirect("/project/#{function.project.id}")
-end
-
-post '/function/open' do
-  function = get_function(params[:id])
-  function.open = true
   redirect("/project/#{function.project.id}")
 end

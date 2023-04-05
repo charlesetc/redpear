@@ -67,15 +67,14 @@ th, td {
     border-right: 16px solid #fbfbfb;
 }
 
+td a {
+    display: inline-block;
+    width: 100%;
+}
+
 td {
     padding-top: 2px;
 }
-
-/*
-tr:not(:first-child):hover {
-    background: #eee;
-}
-*/
 
 th {
   font-weight: normal;
