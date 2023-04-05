@@ -160,7 +160,7 @@ function FunctionRow(fn) {
   return (
     <tr>
       <td><a href={`/function/${fn.id}`}>{fn.name}</a>
-        <button class='delete-fn' onclick={() => maybeDeleteFunction(fn)}>Delete</button>
+        <button class='delete-fn' onclick={() => maybeDeleteFunction(fn)}>x</button>
       </td>
       <td>
         {routeEditor}

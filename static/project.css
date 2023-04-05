@@ -58,6 +58,7 @@ section:not(.main) {
 .functions-index td {
     font-family: iosevka;
     font-size: 15px;
+    position: relative;
 }
 
 .functions-index tr input {
@@ -72,6 +73,22 @@ section:not(.main) {
 .functions-index tr input:focus + .close-button {
     opacity: 1;
 }
+
+.functions-index .delete-fn {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    opacity: 0;
+}
+
+.functions-index td:hover .delete-fn {
+    opacity: 1;
+}
+
+.functions-index td:first-child {
+    padding-right: 34px;
+}
+
 
 .route-editor .close-button {
     opacity: 0;
