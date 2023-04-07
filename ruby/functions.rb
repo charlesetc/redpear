@@ -16,7 +16,6 @@ post '/function/new' do
       name:,
       source: empty_function(name),
       route: nil,
-      arguments: [],
       deleted: false,
     )
     redirect back
