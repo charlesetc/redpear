@@ -5,8 +5,8 @@ class SingleVersionDir
     @dir = "./user-state/#{project.id}/#{timestamp}"
     @requires = "#{@dir}/requires.rb"
     @routes = "#{@dir}/routes.rb"
-    write_in_dir(@routes, "require_relative \"./routes.rb\"\n")
-    Dir.mkdir_p(@dir)
+    `mkdir -p #{@dir}`
+    File.write(@routes, "require_relative \"./requires.rb\"\n")
   end
 
   def write_in_dir(file, content)
@@ -19,22 +19,24 @@ class SingleVersionDir
     end
   end
 
-  def add_route(route, function)
+  def add_route(function)
     File.open(@routes, "a") do |f|
-      f.write(<<ROUTE
-#{route.method.downcase} "#{route.pattern.downcase}" do
+      if function.route
+        f.write(<<ROUTE
+#{function.route["method"].downcase} "#{function.route["pattern"].downcase}" do
   #{function.name}()
 end
 ROUTE
-      )
+        )
+      end
     end
   end
 
   def write_function(function)
-    filename = "#{function.name}-#{function.id}.rb"
+    filename = "f-#{function.id}.rb"
     write_in_dir(filename, function.source)
     add_require(filename)
-    add_route(route, function)
+    add_route(function)
   end
 end
 
