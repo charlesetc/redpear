@@ -15,9 +15,16 @@
         const pageContext = {
             fn: {{& function_blob}}
         }
+
+        document.addEventListener('keydown', e => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                // Prevent the Save dialog to open
+                e.preventDefault();
+                window.saveEditor()
+            }
+        });
     </script>
     <script src="/js/main.js"></script>
-    <script src="/js/components/function-operations.js"></script>
 
     <script>
         function init() {
