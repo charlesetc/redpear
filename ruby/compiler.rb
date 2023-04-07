@@ -1,21 +1,34 @@
 
-class SingleVersionDir
+class ProjectDir
   def initialize(project)
     timestamp = Time.now.utc.strftime('%Y-%m-%dT%H:%M:%S')
     @dir = "./user-state/#{project.id}/#{timestamp}"
     @requires = "#{@dir}/requires.rb"
     @routes = "#{@dir}/routes.rb"
+    @config = "#{@dir}/config.ru"
     `mkdir -p #{@dir}`
-    File.write(@routes, "require_relative \"./requires.rb\"\n")
+    write_config
   end
 
-  def write_in_dir(file, content)
+  def write_config
+    File.write(@config, <<END
+require 'sinatra'
+require_relative './requires.rb'
+require_relative './routes.rb'
+
+run Sinatra::Application
+END
+    )
+
+  end
+
+  def write_file_in_dir(file, content)
     File.write(File.join(@dir, file), content)
   end
 
   def add_require(filename)
     File.open(@requires, "a") do |f|
-      f.write("require_relative \"./#{filename}\"\n")
+      f.write("require_relative './#{filename}'\n")
     end
   end
 
@@ -34,20 +47,15 @@ ROUTE
 
   def write_function(function)
     filename = "f-#{function.id}.rb"
-    write_in_dir(filename, function.source)
+    write_file_in_dir(filename, function.source)
     add_require(filename)
     add_route(function)
   end
 end
 
-def compile_function(function, outdir)
-  filename = "#{function.name}-#{function.id}.rb"
-end
-
 def compile_project(project)
-  dir = SingleVersionDir.new(project)
+  dir = ProjectDir.new(project)
   :function.findmany(project: project, deleted: false).each do |function|
     dir.write_function(function)
-    compile_function(function, dir)
   end
 end
