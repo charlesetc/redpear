@@ -1,4 +1,4 @@
-
+require_relative "./utils.rb"
 
 get '/' do
   if session[:user]
@@ -17,7 +17,13 @@ end
 post '/project/new' do
   name = Utils.generate_project_name
   # slug = name.gsub(" ", "-").downcase
-  project = :project.(name:, user: current_user, deleted: false) if current_user
+  project = :project.(
+    name:,
+    user: current_user,
+    deleted: false,
+    pid: nil,
+    port: nil,
+  ) if current_user
   redirect("/")
   # redirect("/projects/#{project.id}")
 end
@@ -39,6 +45,7 @@ get '/project/:id' do
   project = get_project(params[:id])
   functions = :function.findmany(project: project, deleted: false).sort_by { |p| p.created_at }
   user = current_user
+  LOG.info "project show"
   Views::Project::Show.render({
     user:,
     project:,

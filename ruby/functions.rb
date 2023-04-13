@@ -1,3 +1,4 @@
+require_relative 'server_processes.rb'
 
 def empty_function(name)
   source = <<END
@@ -52,11 +53,13 @@ post '/function/edit' do
   function.source = params[:source] if params.key?(:source)
   function.route = params[:route] if params.key?(:route)
   flash 'Saved successfully'
+  ServerProcesses::restart(function.project)
   redirect back
 end
 
 post '/function/delete' do
   function = get_function(params[:id])
   function.deleted = true
+  ServerProcesses::restart(function.project)
   redirect("/project/#{function.project.id}")
 end

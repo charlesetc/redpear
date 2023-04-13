@@ -171,7 +171,8 @@ let saveOnBlur =
           fetchPost('/function/edit', {
             source: view.state.doc.toString(),
             id: pageContext.fn.id,
-          })
+          });
+          window.getSelection()?.removeAllRanges();
         },
       },
     }

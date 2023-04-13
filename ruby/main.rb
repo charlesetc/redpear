@@ -1,9 +1,9 @@
 require 'sinatra'
+require 'logger'
 require 'toml'
 require 'bcrypt'
 require 'walnut'
 require_relative 'views.rb'
-require_relative 'utils.rb'
 require_relative 'functions.rb'
 require_relative 'projects.rb'
 
@@ -12,6 +12,9 @@ SECRETS = TOML.load_file(".secrets.toml")
 enable :sessions
 set :public_folder, "static"
 set :session_secret, SECRETS['session']
+
+LOG = Logger.new(STDOUT)
+set :logger, LOG
 
 module Sinatra
   module Flash

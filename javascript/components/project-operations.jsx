@@ -65,13 +65,24 @@ function ProjectName() {
   </>;
 }
 
+function navigateDev() {
+  url = `http://${pageContext.project.id}.dev.${window.location.hostname}`
+  window.open(url, '_blank').focus();
+}
+
+function navigateProd() {
+  url = `http://${pageContext.project.id}.${window.location.hostname}`
+  window.open(url, '_blank').focus();
+}
+
 function ProjectOperations() {
   return (
     <>
       <button onclick={maybeDeleteProject}>Delete</button>
       <button onclick={() => nameInput.focus()}>Rename</button>
-      <button>Project URL</button>
-      <button>Deploy</button>
+      <button>Deploy to Prod</button>
+      <button onClick={navigateDev}>Dev<span class='icon'><img src="/icons/external-link.svg" /></span></button>
+      <button onClick={navigateProd}>Prod<span class='icon'><img src="/icons/external-link.svg" /></span></button>
     </>
   )
 }

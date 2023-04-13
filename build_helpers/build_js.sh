@@ -4,4 +4,4 @@ esbuild $(find javascript -type f) \
 	--jsx=automatic \
 	--outdir=static/js \
 	--bundle \
-	--watch
+	"$@"

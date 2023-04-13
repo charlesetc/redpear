@@ -1,29 +1,37 @@
-
 class ProjectDir
   def initialize(project)
     timestamp = Time.now.utc.strftime('%Y-%m-%dT%H:%M:%S')
-    @dir = "./user-state/#{project.id}/#{timestamp}"
-    @requires = "#{@dir}/requires.rb"
-    @routes = "#{@dir}/routes.rb"
-    @config = "#{@dir}/config.ru"
-    `mkdir -p #{@dir}`
+    @root = "./user-state/#{project.id}/#{timestamp}"
+    @requires = "#{@root}/requires.rb"
+    @routes = "#{@root}/routes.rb"
+    @config = "#{@root}/config.ru"
+    `mkdir -p #{@root}`
+    `mkdir -p #{@root}/logs`
     write_config
+  end
+
+  def root
+    @root
+  end
+
+  def log_directives
+    return { out: "#{@root}/logs/stdout.log", err: "#{@root}/logs/stderr.log" }
   end
 
   def write_config
     File.write(@config, <<END
 require 'sinatra'
+require 'net/http'
 require_relative './requires.rb'
 require_relative './routes.rb'
 
 run Sinatra::Application
 END
     )
-
   end
 
   def write_file_in_dir(file, content)
-    File.write(File.join(@dir, file), content)
+    File.write(File.join(@root, file), content)
   end
 
   def add_require(filename)
@@ -53,9 +61,12 @@ ROUTE
   end
 end
 
-def compile_project(project)
-  dir = ProjectDir.new(project)
-  :function.findmany(project: project, deleted: false).each do |function|
-    dir.write_function(function)
+module Compiler
+  def self.compile_project(project)
+    dir = ProjectDir.new(project)
+    :function.findmany(project: project, deleted: false).each do |function|
+      dir.write_function(function)
+    end
+    return dir
   end
 end
