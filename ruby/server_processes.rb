@@ -4,8 +4,12 @@ require_relative 'ports.rb'
 
 module ServerProcesses
   def self.kill(project)
-    LOG.info "killing #{project.name}'s process #{project.pid.inspect}"
-    Process.kill(15, project.pid) if project.pid
+    begin
+      Process.kill(15, project.pid) if project.pid
+      LOG.info "killed #{project.name}'s process #{project.pid.inspect}"
+    rescue Errno::ESRCH => e
+      LOG.info "oops tried to kill #{project.name}'s process that did not exist: #{project.pid}"
+    end
   end
 
   def self.rackup(project:, project_dir:)

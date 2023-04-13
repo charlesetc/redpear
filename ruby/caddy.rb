@@ -3,9 +3,9 @@ require 'json'
 module Caddy
 
   def self.reload()
-    File.open('/tmp/redpear', 'w') do |tmp|
-      tmp.write(self.config().to_json())
-      system("caddy reload --config '#{tmp.to_path}' > /tmp/out")
+    File.open('/tmp/redpear-caddy-config.json', 'w') do |f|
+      f.write(self.config().to_json())
+      system("caddy reload --config '#{f.to_path}' > /tmp/out")
       LOG.info("reloaded caddy config")
     end
   end
@@ -31,7 +31,7 @@ module Caddy
 
     def self.config()
       project_routes = :project.all.map do |project|
-        reverse_proxy(project.id + '.redpear.local', project.port)
+        reverse_proxy(project.id + ".#{DOMAIN}", project.port)
       end
 
       {
@@ -41,7 +41,7 @@ module Caddy
               new_server: {
                 listen: [":80"],
                 routes: [
-                  reverse_proxy('redpear.local', '9292'),
+                  reverse_proxy(DOMAIN, '9292'),
                   *project_routes
                 ]
               }

@@ -52,6 +52,7 @@ get '/project/:id' do
     project_blob: project.to_json_full,
     functions:,
     functions_blob: functions.map {|x| x.to_hash}.to_json,
+    domain: DOMAIN,
   })
 end
 
