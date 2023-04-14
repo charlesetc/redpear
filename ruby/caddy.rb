@@ -3,11 +3,10 @@ require 'json'
 module Caddy
 
   def self.reload()
-    File.open('/tmp/redpear-caddy-config.json', 'w') do |f|
-      f.write(self.config().to_json())
-      system("caddy reload --config '#{f.to_path}' > /tmp/out")
-      LOG.info("reloaded caddy config")
-    end
+    config_file = '/tmp/redpear-caddy-config.json'
+    File.write(config_file, self.config().to_json())
+    system("caddy reload --config '#{config_file}' > /tmp/out")
+    LOG.info("reloaded caddy config")
   end
 
   private
