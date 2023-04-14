@@ -64,7 +64,6 @@ post '/project/edit' do
   json_params
   project = get_project(params[:id])
   project.name = params[:name]
-  flash 'Saved successfully'
   redirect_secure back
 end
 
