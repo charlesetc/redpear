@@ -26,11 +26,11 @@ def get_function(id)
   function = :function.findone(id:,)
   if not function
     flash 'no such function'
-    redirect('/')
+    redirect_secure('/')
   end
   if function.project.user != current_user
     flash 'denied'
-    redirect('/')
+    redirect_secure('/')
   end
   return function
 end
@@ -61,5 +61,5 @@ post '/function/delete' do
   function = get_function(params[:id])
   function.deleted = true
   ServerProcesses::restart(function.project)
-  redirect("/project/#{function.project.id}")
+  redirect_secure("/project/#{function.project.id}")
 end

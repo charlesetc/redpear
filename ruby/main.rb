@@ -9,9 +9,14 @@ require_relative 'projects.rb'
 
 SECRETS = TOML.load_file(".secrets.toml")
 
-enable :sessions
+# this is important: for some reason with just
+# enable :sessions sinatra ends up wiping the
+# session on post.
+use Rack::Session::Cookie, :key => 'rack.session',
+                           :path => '/',
+                           :secret => SECRETS['session']
+set :session_secret, SECRETS['session'] # unsure if this is necessary
 set :public_folder, "static"
-set :session_secret, SECRETS['session']
 
 LOG = Logger.new(STDOUT)
 set :logger, LOG
@@ -39,7 +44,18 @@ module Sinatra
     end
   end
 
-  helpers Flash, JSONParams
+  module RedirectSecure
+    def redirect_secure(path)
+      if IS_PROD
+        path = "" if path == "/"
+        redirect "https://#{request.host}/#{path}"
+      else
+        redirect path
+      end
+    end
+  end
+
+  helpers Flash, JSONParams, RedirectSecure
 end
 
 def current_user
@@ -57,12 +73,12 @@ post '/sign-up' do
     :user.(email:, salt:, hash:)
     session[:user] = email
   end
-  redirect('/')
+  redirect_secure('/')
 end
 
 get '/log-out' do
   session[:user] = nil
-  redirect('/')
+  redirect_secure('/')
 end
 
 post '/log-in' do
@@ -74,7 +90,7 @@ post '/log-in' do
   hash = BCrypt::Engine::hash_secret(password, user.salt)
   if user.hash == hash
     session[:user] = email
-    redirect('/')
+    redirect_secure('/')
   else
     return 'incorrect email or password'
   end

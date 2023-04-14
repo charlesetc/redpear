@@ -24,8 +24,7 @@ module Caddy
               }
             ]
           }
-        ],
-        terminal: true
+        ]
       }
     end
 

@@ -1,20 +1,24 @@
 require_relative "./utils.rb"
 
 get '/' do
+  LOG.info("handling /, user is #{session[:user]}")
   if session[:user]
+    LOG.info("found user, rendering")
     user = current_user
-        projects = :project.findmany(user: user, deleted: false).sort_by { |p| p.created_at }
-        Views::Project::Index.render({user:, projects:, flash: get_flash})
+    projects = :project.findmany(user: user, deleted: false).sort_by { |p| p.created_at }
+    Views::Project::Index.render({user:, projects:, flash: get_flash})
   else
+    LOG.info("no user")
     Views::Landing.render
   end
 end
 
 get "/project/?" do
-  redirect("/")
+  redirect_secure("/")
 end
 
 post '/project/new' do
+  LOG.info("************ making new project")
   name = Utils.generate_project_name
   # slug = name.gsub(" ", "-").downcase
   project = :project.(
@@ -24,7 +28,8 @@ post '/project/new' do
     pid: nil,
     port: nil,
   ) if current_user
-  redirect("/")
+  LOG.info("redirecting" + session[:user].to_s)
+  redirect_secure("/")
   # redirect("/projects/#{project.id}")
 end
 
@@ -32,11 +37,11 @@ def get_project(id)
   project = :project.findone(id:,)
   if not project
     flash 'no such project'
-    redirect('/')
+    redirect_secure('/')
   end
   if project.user != current_user
     flash 'denied'
-    redirect('/')
+    redirect_secure('/')
   end
   return project
 end
@@ -45,7 +50,6 @@ get '/project/:id' do
   project = get_project(params[:id])
   functions = :function.findmany(project: project, deleted: false).sort_by { |p| p.created_at }
   user = current_user
-  LOG.info "project show"
   Views::Project::Show.render({
     user:,
     project:,
@@ -61,12 +65,12 @@ post '/project/edit' do
   project = get_project(params[:id])
   project.name = params[:name]
   flash 'Saved successfully'
-  redirect back
+  redirect_secure back
 end
 
 post '/project/delete' do
   project = get_project(params[:id])
   :function.findmany(project: project).each { |function| function.deleted = true }
   project.deleted = true
-  redirect("/")
+  redirect_secure("/")
 end
