@@ -33,11 +33,37 @@ module Caddy
         reverse_proxy(project.id + ".#{DOMAIN}", project.port)
       end
 
+
       {
+        logging: {
+          logs: {
+            default: {
+              exclude: [
+                "http.log.access.log0"
+              ]
+            },
+            log0: {
+              writer: {
+                filename: "/var/log/caddy/redpear.log",
+                output: "file"
+              },
+              encoder: {
+                format: "json"
+              },
+              level: "debug",
+              include: [
+                "http.log.access.log0"
+              ]
+            }
+          }
+        },
         apps: {
           http: {
             servers: {
               new_server: {
+                logs: {
+                  default_logger_name: "log0"
+                },
                 listen: [":80"],
                 routes: [
                   reverse_proxy(DOMAIN, '9292'),
