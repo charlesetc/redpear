@@ -174,6 +174,9 @@ let saveOnBlur =
           });
           window.getSelection()?.removeAllRanges();
         },
+        input: (e, view) => {
+          console.log("text changed!", e, view)
+        }
       },
     }
   );

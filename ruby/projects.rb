@@ -49,6 +49,7 @@ end
 get '/project/:id' do
   project = get_project(params[:id])
   functions = :function.findmany(project: project, deleted: false).sort_by { |p| p.created_at }
+  html_templates = :html_template.findmany(project: project, deleted: false).sort_by { |p| p.created_at }
   user = current_user
   Views::Project::Show.render({
     user:,
@@ -56,7 +57,7 @@ get '/project/:id' do
     project_blob: project.to_json_full,
     functions:,
     functions_blob: functions.map {|x| x.to_hash}.to_json,
-    domain: DOMAIN,
+    templates_blob: html_templates.map {|x| x.to_hash}.to_json,
   })
 end
 
@@ -70,6 +71,7 @@ end
 post '/project/delete' do
   project = get_project(params[:id])
   :function.findmany(project: project).each { |function| function.deleted = true }
+  :html_template.findmany(project: project).each { |template| template.deleted = true }
   project.deleted = true
   redirect_secure("/")
 end

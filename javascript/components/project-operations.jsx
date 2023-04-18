@@ -165,15 +165,12 @@ function FunctionRow(fn) {
   return (
     <tr>
       <td><a href={`/function/${fn.id}`}>{fn.name}</a>
-        <button class='delete-fn' onclick={() => maybeDeleteFunction(fn)}>x</button>
+        <button class='delete-button' onclick={() => maybeDelete('function', fn)}>x</button>
       </td>
       <td>
         {routeEditor}
         {addRouteButton}
       </td>
-      {/* <td>
-        <button class='delete-fn' onclick={() => maybeDeleteFunction(fn)}>Delete</button>
-        </td> */}
     </tr>
   )
 }
@@ -189,22 +186,48 @@ function FunctionsTable() {
         </tr>
         {rows}
       </table>
-
-      <form method='post' action='/function/new'>
-        <input type="hidden" value={pageContext.project.id} name="project_id" />
-        <button type='submit'>New</button>
-      </form>
     </>
   )
 }
 
 
-function maybeDeleteFunction({ id }) {
-  if (confirm("This will delete this function. Are you sure")) {
-    formPost('/function/delete', { id });
+function TemplateRow(template) {
+  console.log(template);
+  return (
+    <tr>
+      <td><a href={`/template/${template.id}`}>{template.name}</a>
+        <button class='delete-button' onclick={() => maybeDelete('template', template)}>x</button>
+      </td>
+      <td>
+        html
+      </td>
+    </tr>
+  )
+}
+
+function TemplatesTable() {
+  let rows = pageContext.templates.map(TemplateRow);
+  return (
+    <>
+      <table>
+        <tr>
+          <th>name</th>
+          <th>type</th>
+        </tr>
+        {rows}
+      </table>
+    </>
+  )
+}
+
+
+function maybeDelete(thing, { id }) {
+  if (confirm(`This will delete this ${thing}. Are you sure`)) {
+    formPost(`/${thing}/ delete `, { id });
   }
 }
 
 document.hotwire(ProjectName)
 document.hotwire(ProjectOperations)
 document.hotwire(FunctionsTable)
+document.hotwire(TemplatesTable)

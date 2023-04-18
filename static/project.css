@@ -77,14 +77,14 @@ section:not(.main) {
     opacity: 1;
 }
 
-.functions-index .delete-fn {
+table .delete-button {
     position: absolute;
     right: 0px;
     top: 0px;
     opacity: 0;
 }
 
-.functions-index td:hover .delete-fn {
+table td:hover .delete-button {
     opacity: 1;
 }
 

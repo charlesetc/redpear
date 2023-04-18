@@ -4,8 +4,9 @@ require 'toml'
 require 'bcrypt'
 require 'walnut'
 require_relative 'views.rb'
-require_relative 'functions.rb'
 require_relative 'projects.rb'
+require_relative 'functions.rb'
+require_relative 'html-templates.rb'
 
 SECRETS = TOML.load_file(".secrets.toml")
 
