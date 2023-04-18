@@ -73,3 +73,21 @@ post '/project/delete' do
   project.deleted = true
   redirect_secure("/")
 end
+
+get '/project/:id/prod' do
+  project = get_project(params[:id])
+  if IS_PROD
+    redirect "https://#{project.id}.dev.#{DOMAIN}"
+  else
+    redirect "http://#{request.host}:#{project.port}"
+  end
+end
+
+get '/project/:id/dev' do
+  project = get_project(params[:id])
+  if IS_PROD
+    redirect "https://#{project.id}.dev.#{DOMAIN}"
+  else
+    redirect "http://#{request.host}:#{project.port}"
+  end
+end
