@@ -143,3 +143,7 @@ button:active .icon img {
     width: 14px;
     display: inline-block;
 }
+
+.template-index td:nth-child(2) {
+    text-align: center;
+}
