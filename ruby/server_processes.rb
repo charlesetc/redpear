@@ -28,9 +28,12 @@ module ServerProcesses
     Caddy::reload()
   end
 
-  # def self.start_all()
-  #   :project.all.each do |project|
-
-  #   end
-  # end
+  def self.start_all()
+    :project.all.each do |project|
+      project.pid = nil unless project.has_field?(:pid)
+      project_dir = Compiler::compile_project(project)
+      rackup(project:, project_dir:)
+    end
+    Caddy::reload()
+  end
 end
