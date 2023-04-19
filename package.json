@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@codemirror/lang-html": "^6.4.3",
     "@codemirror/language": "^6.6.0",
     "@codemirror/legacy-modes": "^6.3.2",
     "bourbon-vanilla": "file:../bourbon-vanilla",

@@ -4,10 +4,12 @@ class ProjectDir
     @root = "./user-state/#{project.id}/#{timestamp}"
     @requires = "#{@root}/requires.rb"
     @routes = "#{@root}/routes.rb"
+    @templates = "#{@root}/templates.rb"
     @config = "#{@root}/config.ru"
     `mkdir -p #{@root}`
     `mkdir -p #{@root}/logs`
     write_config
+    initialize_templates
   end
 
   def root
@@ -18,11 +20,24 @@ class ProjectDir
     return { out: "#{@root}/logs/stdout.log", err: "#{@root}/logs/stderr.log" }
   end
 
+  def initialize_templates
+    File.write(@templates, <<END
+require 'mustache'
+def __mustache(file)
+  cls = Class.new(Mustache)
+  cls.template_file = file
+  cls.new
+end
+END
+    )
+  end
+
   def write_config
     File.write(@config, <<END
 require 'sinatra'
 require 'net/http'
 require_relative './requires.rb'
+require_relative './templates.rb'
 require_relative './routes.rb'
 
 run Sinatra::Application
@@ -53,18 +68,37 @@ ROUTE
     end
   end
 
+  def add_template_reference(template, filename)
+    File.open(@templates, "a") do |f|
+      f.write(<<TEMPLATE
+#{template.name} = __mustache('#{filename}')
+TEMPLATE
+      )
+    end
+  end
+
   def write_function(function)
     filename = "f-#{function.id}.rb"
     write_file_in_dir(filename, function.source)
     add_require(filename)
     add_route(function)
   end
+
+  def write_html_template(template)
+    filename = "t-#{template.id}.html"
+    write_file_in_dir(filename, template.source)
+    add_template_reference(template, filename)
+  end
+
 end
 
 module Compiler
   def self.compile_project(project)
     dir = ProjectDir.new(project)
-    :function.findmany(project: project, deleted: false).each do |function|
+    :html_template.findmany(project:, deleted: false).each do |html_template|
+      dir.write_html_template(html_template)
+    end
+    :function.findmany(project:, deleted: false).each do |function|
       dir.write_function(function)
     end
     return dir

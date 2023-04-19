@@ -199,7 +199,7 @@ function TemplateRow(template) {
         <button class='delete-button' onclick={() => maybeDelete('template', template)}>x</button>
       </td>
       <td>
-        html
+        mustache
       </td>
     </tr>
   )

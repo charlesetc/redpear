@@ -10,8 +10,9 @@ import {
   ViewPlugin
 } from "@codemirror/view";
 // import { autocompletion } from "@codemirror/autocomplete";
-import { StreamLanguage } from "@codemirror/language"
-import { ruby } from "@codemirror/legacy-modes/mode/ruby"
+import { StreamLanguage } from "@codemirror/language";
+import { ruby } from "@codemirror/legacy-modes/mode/ruby";
+import { html } from "@codemirror/lang-html";
 import { Extension, EditorState } from "@codemirror/state";
 import {
   syntaxHighlighting,
@@ -83,7 +84,7 @@ export const birchHighlighting = HighlightStyle.define([
       t.self,
       t.namespace,
     ],
-    color: black,
+    color: purple,
   },
   {
     tag: [
@@ -178,13 +179,22 @@ let saveOnBlur =
     }
   );
 
-export function instantiateEditor(editor: Element) {
+export function instantiateEditor(editor: Element, language: 'ruby' | 'html') {
   const source = editor.textContent!;
   editor.textContent = "";
+
+  let languageExtension: Extension;
+  if (language === 'ruby') {
+    languageExtension = StreamLanguage.define(ruby);
+  } else if (language === 'html') {
+    languageExtension = html({ selfClosingTags: true }).extension
+  } else {
+    throw `language ${language} not supported`
+  }
   let extensions = [
     functionSetup,
     saveOnBlur,
-    StreamLanguage.define(ruby),
+    languageExtension,
     keymap.of([indentWithTab])
   ];
   let view = new EditorView({

@@ -6,7 +6,7 @@ get '/' do
     LOG.info("found user, rendering")
     user = current_user
     projects = :project.findmany(user: user, deleted: false).sort_by { |p| p.created_at }
-    Views::Project::Index.render({user:, projects:, flash: get_flash})
+    Views::Index.render({user:, projects:, flash: get_flash})
   else
     LOG.info("no user")
     Views::Landing.render
@@ -51,7 +51,7 @@ get '/project/:id' do
   functions = :function.findmany(project: project, deleted: false).sort_by { |p| p.created_at }
   html_templates = :html_template.findmany(project: project, deleted: false).sort_by { |p| p.created_at }
   user = current_user
-  Views::Project::Show.render({
+  Views::Project.render({
     user:,
     project:,
     project_blob: project.to_json_full,

@@ -37,7 +37,7 @@ end
 
 get '/function/:id' do
   function = get_function(params[:id])
-  Views::Function::Show.render({
+  Views::Function.render({
     user: current_user,
     function:,
     function_blob: function.to_json_full,

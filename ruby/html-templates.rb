@@ -47,7 +47,7 @@ end
 
 get '/template/:id' do
   template = get_html_template(params[:id])
-  Views::Template::Show.render({
+  Views::Template.render({
     user: current_user,
     template:,
     template_blob: template.to_json_full,
