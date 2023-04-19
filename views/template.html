@@ -13,9 +13,9 @@
     <link rel='stylesheet' href='/template.css'>
 
     <script>
-        const pageContext = {
-            template: {{& template_blob}}
-        }
+        const pageContext = {}
+        pageContext.template = {{& template_blob}}
+        pageContext.functions = {{& functions_blob}}
 
         async function saveSource(editorView) {
             await fetchPost('/template/edit', {

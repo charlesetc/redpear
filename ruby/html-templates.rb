@@ -47,10 +47,12 @@ end
 
 get '/template/:id' do
   template = get_html_template(params[:id])
+  functions = :function.findmany(project: template.project, deleted: false)
   Views::Template.render({
     user: current_user,
     template:,
     template_blob: template.to_json_full,
+    functions_blob: functions.map {|x| x.to_hash}.to_json,
     project: template.project,
     flash: get_flash
   })

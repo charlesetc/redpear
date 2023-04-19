@@ -9,7 +9,6 @@ import {
   EditorView,
   ViewPlugin
 } from "@codemirror/view";
-// import { autocompletion } from "@codemirror/autocomplete";
 import { StreamLanguage } from "@codemirror/language";
 import { ruby } from "@codemirror/legacy-modes/mode/ruby";
 import { html } from "@codemirror/lang-html";
@@ -28,6 +27,7 @@ import {
   closeBrackets,
   closeBracketsKeymap,
   acceptCompletion,
+  autocompletion
 } from "@codemirror/autocomplete";
 import { lintKeymap } from "@codemirror/lint";
 import { tags as t } from "@lezer/highlight";
@@ -122,6 +122,78 @@ export const birchHighlighting = HighlightStyle.define([
   { tag: t.invalid, color: invalid },
 ]);
 
+// let tableName = index.text.split(".")[0];
+//   let tableNames = cards()
+//     .filter(({ kind }) => kind === "table")
+//     .map(({ name }) => name());
+//   if (tableNames.includes(tableName)) {
+//     return {
+//       from: index.from + tableName.length + 1,
+//       options: tableMethods.map((label) => {
+//         return { label, detail: "(method)", type: "variable" };
+//       }),
+//     };
+//   } else {
+//     return null;
+//   }
+
+export function fancyCompletions(context) {
+  let routeActions = pageContext.functions.filter((fn: any) => fn.route);
+
+  let isAction = context.matchBefore(/action='?"?\w*/);
+  if (isAction) {
+    return {
+      from: isAction.from + 'action='.length,
+      options: routeActions.map((fn: any) => {
+        return {
+          label: `"${fn.route.pattern}"`,
+          type: "variable",
+        }
+      })
+    }
+  }
+
+  let isForm = context.matchBefore(/<form/);
+  if (isForm) {
+    return {
+      from: isForm.from,
+      options: routeActions.map((fn: any) => {
+        return {
+          label: `<form action="${fn.route.pattern}" method="post">\n    \n</form>`,
+          type: "text",
+        }
+      })
+    }
+  }
+
+  let isButton = context.matchBefore(/<button/);
+  if (isButton) {
+    return {
+      from: isButton.from,
+      options: [{
+        label: `<button type="submit"></button>`,
+        type: "text",
+      }],
+    }
+  }
+
+
+  let isInput = context.matchBefore(/<input/);
+  if (isInput) {
+    return {
+      from: isInput.from,
+      options: [
+        {
+          label: `<input type="text" name="todo" />`,
+          type: "text",
+        },
+      ],
+    }
+  }
+
+  return null
+}
+
 export const functionSetup: Extension = [
   lineNumbers(),
   birchTheme,
@@ -146,6 +218,7 @@ export const functionSetup: Extension = [
   // highlightActiveLine(),
   // autoformatPlugin,
   highlightSelectionMatches(),
+  autocompletion({ override: [fancyCompletions] }),
   keymap.of([
     ...closeBracketsKeymap,
     ...defaultKeymap,

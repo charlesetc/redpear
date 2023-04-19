@@ -27,4 +27,10 @@ module ServerProcesses
     rackup(project:, project_dir:)
     Caddy::reload()
   end
+
+  # def self.start_all()
+  #   :project.all.each do |project|
+
+  #   end
+  # end
 end
