@@ -1,6 +1,6 @@
 run:
 	@tmux split-pane -v make build-js
-	@APP_ENV=development rerun --ignore 'user-state/*' --ignore 'store/*' rackup -p 9292
+	@APP_ENV=development rerun -d ruby,javascript,views rackup -p 9292
 
 prod:
 	bash build_helpers/build_js.sh   ## no --watch

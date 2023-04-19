@@ -4,15 +4,16 @@ def empty_template(name, project)
   source = <<END
 <!doctype html>
 <html>
-  <head>
-    <title>#{project.name}::#{name}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-  </head>
+<head>
+  <title>#{project.name}::#{name}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
 
-  <body>
+<body>
   <h1>#{name}</h1>
+
   <p>Welcome to my Red Pear app!</p>
-  </body>
+</body>
 </html>
 END
   source.chomp

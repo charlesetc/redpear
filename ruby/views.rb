@@ -15,4 +15,7 @@ module Views
   module Function
     Show = Views.mustache('views/function/show.html')
   end
+  module Template
+    Show = Views.mustache('views/template/show.html')
+  end
 end

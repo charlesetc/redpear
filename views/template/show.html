@@ -13,13 +13,13 @@
 
     <script>
         const pageContext = {
-            fn: {{& function_blob}}
+            template: {{& template_blob}}
         }
 
         async function saveSource(editorView) {
-            await fetchPost('/function/edit', {
+            await fetchPost('/template/edit', {
                 source: editorView.state.doc.toString(),
-                id: pageContext.fn.id,
+                id: pageContext.template.id,
             })
         }
         window.dynamic = {saveSource}
@@ -59,10 +59,10 @@
 <body>
     <section class="main">
         <h1 class="main-title">
-            <a href='/'>Red Pear</a>::<a href='/project/{{project.id}}'>{{project.name}}</a>::{{function.name}}
+            <a href='/'>Red Pear</a>::<a href='/project/{{project.id}}'>{{project.name}}</a>::{{template.name}}
         </h1>
 
-        <pre id='editor'>{{function.source}}</pre>
+        <pre id='editor'>{{template.source}}</pre>
     </section>
 
     {{#flash}}

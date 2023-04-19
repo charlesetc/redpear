@@ -161,17 +161,14 @@ export const functionSetup: Extension = [
 let saveOnBlur =
   ViewPlugin.fromClass(
     class {
-      constructor(_) { }
+      constructor() { }
 
       update() { }
     },
     {
       eventHandlers: {
         blur: (e, view) => {
-          fetchPost('/function/edit', {
-            source: view.state.doc.toString(),
-            id: pageContext.fn.id,
-          });
+          dynamic.saveSource(view);
           window.getSelection()?.removeAllRanges();
         },
         input: (e, view) => {
@@ -199,17 +196,5 @@ export function instantiateEditor(editor: Element) {
   });
   return view
 }
-
-
-async function saveEditor() {
-  const editor = document.getElementById('editor')!;
-  await fetchPost('/function/edit', {
-    source: editor.view.state.doc.toString(),
-    id: pageContext.fn.id,
-  })
-  // debugger
-}
-
-window.saveEditor = saveEditor
 
 // window.addEventListener('beforeunload', saveEditor)
