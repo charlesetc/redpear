@@ -58,10 +58,19 @@ section:not(.main) {
     left: -1px;
 }
 
-.functions-index td {
+table td {
+    position: relative;
     font-family: iosevka;
     font-size: 15px;
-    position: relative;
+}
+
+.template-index td {
+    padding-top: 7px;
+}
+
+table {
+    margin-top: 20px;
+    margin-bottom: 10px;
 }
 
 .functions-index tr input {
@@ -88,7 +97,7 @@ table td:hover .delete-button {
     opacity: 1;
 }
 
-.functions-index td:first-child {
+table td:first-child {
     padding-right: 34px;
 }
 

@@ -32,7 +32,7 @@ post '/template/new-html' do
 end
 
 def get_html_template(id)
-  template = :templates.findone(id:,)
+  template = :html_template.findone(id:,)
   if not template
     flash 'no such template'
     redirect_secure('/')

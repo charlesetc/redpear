@@ -223,7 +223,7 @@ function TemplatesTable() {
 
 function maybeDelete(thing, { id }) {
   if (confirm(`This will delete this ${thing}. Are you sure`)) {
-    formPost(`/${thing}/ delete `, { id });
+    formPost(`/${thing}/delete `, { id });
   }
 }
 
