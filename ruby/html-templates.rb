@@ -61,6 +61,7 @@ post '/template/edit' do
   id = params[:id]
   template = get_html_template(id)
   template.source = params[:source] if params.key?(:source)
+  template.name = params[:name] if params.key?(:name)
   ServerProcesses::restart(template.project)
   redirect back
 end

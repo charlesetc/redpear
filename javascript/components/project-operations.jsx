@@ -1,42 +1,8 @@
-import { createSignal, createEffect, on as solidOn } from "solid-js";
+import { createSignal, createEffect } from "solid-js";
+import { createNameInput } from "./name-input";
 
-let doneButton = <button style='display:none'>Done</button>
 
-function createNameInput() {
-  const measure = <pre class='measure'></pre>
-
-  function resizeToWidth() {
-    measure.textContent = self.value;
-    self.style.width = measure.offsetWidth + 4 + 'px'
-  }
-
-  const self =
-    <input
-      onBlur={() => {
-        saveName();
-        doneButton.style.display = 'none';
-      }}
-      onFocus={() => {
-        resizeToWidth()
-        doneButton.style.display = 'inline';
-        self.select()
-      }}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter') {
-          self.blur()
-          e.preventDefault()
-          e.stopPropagation()
-        }
-      }}
-      onInput={resizeToWidth}
-      type='text'
-      value={pageContext.project.name}
-    />;
-  return [self, measure]
-
-}
-
-const [nameInput, measure] = createNameInput()
+const [nameInput, measure] = createNameInput(pageContext.project.name, saveName)
 
 function saveName() {
   const name = nameInput.value;
@@ -60,7 +26,6 @@ function maybeDeleteProject() {
 function ProjectName() {
   return <>
     {nameInput}
-    {doneButton}
     {measure}
   </>;
 }

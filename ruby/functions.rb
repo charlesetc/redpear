@@ -52,6 +52,7 @@ post '/function/edit' do
   function = get_function(id)
   function.source = params[:source] if params.key?(:source)
   function.route = params[:route] if params.key?(:route)
+  function.name = params[:name] if params.key?(:name)
   ServerProcesses::restart(function.project)
   redirect back
 end

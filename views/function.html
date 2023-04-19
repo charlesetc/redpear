@@ -9,17 +9,18 @@
 
     <link rel="shortcut icon" type="image/ico" href="/favicon.ico" />
     <link rel="stylesheet" href="/basic.css" />
+    <link rel="stylesheet" href="/editor.css" />
     <link rel="stylesheet" href="/function.css" />
 
     <script>
         const pageContext = {
-            fn: {{& function_blob}}
+            function: {{& function_blob}}
         }
 
         async function saveSource(editorView) {
             await fetchPost('/function/edit', {
                 source: editorView.state.doc.toString(),
-                id: pageContext.fn.id,
+                id: pageContext.function.id,
             })
         }
         window.dynamic = {saveSource}
@@ -38,6 +39,8 @@
         });
     </script>
     <script src="/js/main.js"></script>
+    <script src='/js/components/function-operations.js'></script>
+
 
     <script>
         function init() {
@@ -59,8 +62,11 @@
 <body>
     <section class="main">
         <h1 class="main-title">
-            <a href='/'>Red Pear</a>::<a href='/project/{{project.id}}'>{{project.name}}</a>::{{function.name}}
+            <a href='/'>Red Pear</a>::<a
+                href='/project/{{project.id}}'>{{project.name}}</a>::<function-name></function-name>
         </h1>
+
+        <function-operations></function-operations>
 
         <pre id='editor'>{{function.source}}</pre>
     </section>

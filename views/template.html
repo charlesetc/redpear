@@ -9,7 +9,8 @@
 
     <link rel="shortcut icon" type="image/ico" href="/favicon.ico" />
     <link rel="stylesheet" href="/basic.css" />
-    <link rel="stylesheet" href="/function.css" />
+    <link rel="stylesheet" href="/editor.css" />
+    <link rel='stylesheet' href='/template.css'>
 
     <script>
         const pageContext = {
@@ -38,6 +39,7 @@
         });
     </script>
     <script src="/js/main.js"></script>
+    <script src='/js/components/template-operations.js'></script>
 
     <script>
         function init() {
@@ -59,8 +61,11 @@
 <body>
     <section class="main">
         <h1 class="main-title">
-            <a href='/'>Red Pear</a>::<a href='/project/{{project.id}}'>{{project.name}}</a>::{{template.name}}
+            <a href='/'>Red Pear</a>::<a
+                href='/project/{{project.id}}'>{{project.name}}</a>::<template-name></template-name>
         </h1>
+
+        <template-operations></template-operations>
 
         <pre id='editor'>{{template.source}}</pre>
     </section>
