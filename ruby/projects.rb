@@ -79,7 +79,7 @@ end
 get '/project/:id/prod' do
   project = get_project(params[:id])
   if IS_PROD
-    redirect "https://#{project.id}.dev.#{DOMAIN}"
+    redirect "https://#{project.id}.#{DOMAIN}"
   else
     redirect "http://#{request.host}:#{project.port}"
   end
