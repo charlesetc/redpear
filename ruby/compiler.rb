@@ -26,7 +26,7 @@ require 'mustache'
 def __mustache(file)
   cls = Class.new(Mustache)
   cls.template_file = file
-  cls.new
+  return cls.new.method(:render)
 end
 END
     )
@@ -60,7 +60,9 @@ END
       if function.route
         f.write(<<ROUTE
 #{function.route["method"].downcase} "#{function.route["pattern"].downcase}" do
-  #{function.name}()
+  result = #{function.name}()
+  return result.call if result.class == Method
+  result
 end
 ROUTE
         )
@@ -72,6 +74,7 @@ ROUTE
     File.open(@templates, "a") do |f|
       f.write(<<TEMPLATE
 #{template.name} = __mustache('#{filename}')
+def #{template.name}(*args, **kwargs) #{template.name}.call(*args, *kwargs) end
 TEMPLATE
       )
     end

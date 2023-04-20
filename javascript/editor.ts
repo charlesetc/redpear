@@ -153,7 +153,7 @@ export function fancyCompletions(context) {
     }
   }
 
-  let isForm = context.matchBefore(/<form/);
+  let isForm = context.matchBefore(/<?form?/);
   if (isForm) {
     return {
       from: isForm.from,
@@ -166,19 +166,19 @@ export function fancyCompletions(context) {
     }
   }
 
-  let isButton = context.matchBefore(/<button/);
+  let isButton = context.matchBefore(/<?butto?n?/);
   if (isButton) {
     return {
       from: isButton.from,
       options: [{
-        label: `<button type="submit"></button>`,
+        label: `<button type="submit">Submit</button>`,
         type: "text",
       }],
     }
   }
 
 
-  let isInput = context.matchBefore(/<input/);
+  let isInput = context.matchBefore(/<?inpu?t?/);
   if (isInput) {
     return {
       from: isInput.from,
