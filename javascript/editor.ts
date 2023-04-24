@@ -33,7 +33,7 @@ import { lintKeymap } from "@codemirror/lint";
 import { tags as t } from "@lezer/highlight";
 
 
-let birchTheme = EditorView.theme(
+let redpearTheme = EditorView.theme(
   {
     "&": {
       color: "black",
@@ -63,7 +63,7 @@ const black = "black",
   whiskey = "#d19a66",
   ocean = "#2586a4";
 
-export const birchHighlighting = HighlightStyle.define([
+export const redpearHighlighting = HighlightStyle.define([
   { tag: t.keyword, color: pink },
   {
     tag: [t.name, t.deleted, t.character, t.propertyName, t.macroName],
@@ -196,7 +196,7 @@ export function fancyCompletions(context) {
 
 export const functionSetup: Extension = [
   lineNumbers(),
-  birchTheme,
+  redpearTheme,
   highlightActiveLineGutter(),
   highlightSpecialChars(),
   history(),
@@ -210,7 +210,7 @@ export const functionSetup: Extension = [
   dropCursor(),
   EditorState.allowMultipleSelections.of(true),
   indentOnInput(),
-  syntaxHighlighting(birchHighlighting, { fallback: true }),
+  syntaxHighlighting(redpearHighlighting, { fallback: true }),
   bracketMatching(),
   closeBrackets(),
   rectangularSelection(),
