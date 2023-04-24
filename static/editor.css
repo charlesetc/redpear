@@ -6,7 +6,7 @@
 }
 
 .cm-editor .cm-line {
-    font-family: iosevka;
+    font-family: iosevka, monospace;
 }
 
 .cm-editor {
