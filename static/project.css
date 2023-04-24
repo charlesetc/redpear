@@ -1,3 +1,20 @@
+body {
+    display: flex;
+}
+
+side-page section {
+    min-height: calc(80vh - 60px);
+
+}
+
+side-page {
+    order: 2;
+    flex-grow: 1;
+    padding: 20px;
+    margin-top: 113px;
+    margin-right: 20px;
+}
+
 project-name {
     position: relative;
 }
@@ -43,6 +60,14 @@ section:not(.main) {
     margin-top: 26px;
     border-radius: 3px;
     outline: 1px solid black;
+}
+
+.main {
+    margin-left: 20px;
+    margin-top: 0px;
+}
+
+.main *:first-child {
 }
 
 .main section .nothing-msg {
