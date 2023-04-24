@@ -1,14 +1,35 @@
 import { createNameInput } from "./name-input";
 
 
-const [nameInput, measure] = createNameInput(pageContext.function.name, saveName)
+const [nameInput, measure] = createNameInput(pageContext.function.name, saveName, { onInput: onNameInput })
+
+dynamic.functionNameInput = nameInput;
+
+function onNameInput() {
+  const editor = document.getElementById('editor');
+  let str = editor.view.state.doc.toString();
+  let match = str.match(/def (\w*)/);
+  if (match) {
+    const from = match.index + 4; // for def
+    const to = match.index + 4 + match[1].length;
+
+    editor.view.dispatch({
+      changes: {
+        from,
+        to,
+        insert: nameInput.value
+      }
+    });
+  }
+}
 
 function saveName() {
   const name = nameInput.value;
   if (name === '') {
     nameInput.value = pageContext.function.name;
   } else {
-    fetchPost('/function/edit', { id: pageContext.function.id, name })
+    const editor = document.getElementById('editor');
+    fetchPost('/function/edit', { id: pageContext.function.id, name, source: editor.view.state.doc.toString() })
     pageContext.function.name = name;
   }
 }

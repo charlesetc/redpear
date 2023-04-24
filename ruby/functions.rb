@@ -37,10 +37,12 @@ end
 
 get '/function/:id' do
   function = get_function(params[:id])
+  functions = :function.findmany(project: function.project, deleted: false)
   Views::Function.render({
     user: current_user,
     function:,
     function_blob: function.to_json_full,
+    functions_blob: functions.map {|x| x.to_hash}.to_json,
     project: function.project,
     flash: get_flash
   })

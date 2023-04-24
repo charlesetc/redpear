@@ -13,13 +13,14 @@
     <link rel="stylesheet" href="/function.css" />
 
     <script>
-        const pageContext = {
-            function: {{& function_blob}}
-        }
+        const pageContext = {}
+        pageContext.function = {{& function_blob}}
+        pageContext.functions = {{& functions_blob}}
 
         async function saveSource(editorView) {
             await fetchPost('/function/edit', {
                 source: editorView.state.doc.toString(),
+                name: dynamic.functionNameInput.value,
                 id: pageContext.function.id,
             })
         }

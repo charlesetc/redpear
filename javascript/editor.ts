@@ -231,13 +231,29 @@ export const functionSetup: Extension = [
   ]),
 ];
 
+let previousName = null;
+
+function parseName(view: any) {
+  let str = view.state.doc.toString();
+  let match = str.match(/def (\w*)/);
+  if (match) {
+    return match[1];
+  } else {
+    return null
+  }
+}
 
 let saveOnBlur =
   ViewPlugin.fromClass(
     class {
       constructor() { }
 
-      update() { }
+      update(update) {
+        let name = parseName(update);
+        if (name) {
+          dynamic.functionNameInput.setValue(name);
+        }
+      }
     },
     {
       eventHandlers: {
@@ -245,9 +261,9 @@ let saveOnBlur =
           dynamic.saveSource(view);
           window.getSelection()?.removeAllRanges();
         },
-        input: (e, view) => {
-          console.log("text changed!", e, view)
-        }
+        focus: (e, view) => {
+          previousName = parseName(view);
+        },
       },
     }
   );

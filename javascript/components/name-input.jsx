@@ -1,5 +1,5 @@
 
-export function createNameInput(initialValue, saveName) {
+export function createNameInput(initialValue, saveName, { onInput } = { onInput: null }) {
   const measure = <pre class='measure'></pre>
   const doneButton = <button style='display:none'>Done</button>;
 
@@ -26,10 +26,19 @@ export function createNameInput(initialValue, saveName) {
           e.stopPropagation()
         }
       }}
-      onInput={resizeToWidth}
+      onInput={() => {
+        self.value = self.value.replace(/ /g, '');
+        onInput();
+        resizeToWidth()
+      }}
       type='text'
       value={initialValue}
     />;
+
+  self.setValue = (value) => {
+    self.value = value;
+    resizeToWidth()
+  };
   return [self, <>{doneButton}{measure}</>]
 
 }
