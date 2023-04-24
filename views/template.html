@@ -16,6 +16,7 @@
         const pageContext = {}
         pageContext.template = {{& template_blob}}
         pageContext.functions = {{& functions_blob}}
+        pageContext.project = {{& project_blob}}
 
         async function saveSource(editorView) {
             await fetchPost('/template/edit', {

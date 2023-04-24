@@ -128,22 +128,6 @@ table:not(.route-editor-focused) tr:hover .add-route  {
     opacity: 1;
 }
 
-.icon img {
-    height: 14px;
-    position: absolute;
-    top:3px;
-    right: 4px;
-}
-
-button:active .icon img {
-    filter: invert(100%);
-}
-
-.icon {
-    width: 14px;
-    display: inline-block;
-}
-
 .template-index td:nth-child(2) {
     text-align: center;
 }

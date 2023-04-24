@@ -53,6 +53,7 @@ get '/template/:id' do
     template:,
     template_blob: template.to_json_full,
     functions_blob: functions.map {|x| x.to_hash}.to_json,
+    project_blob: template.project.to_json_full,
     project: template.project,
     flash: get_flash
   })

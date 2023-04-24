@@ -6,7 +6,7 @@ prod:
 	bash build_helpers/build_js.sh   ## no --watch
 	APP_ENV=production bundle exec rackup -p 9292
 
-pull: 
+pull:
 	git pull
 
 build-js:

@@ -43,6 +43,7 @@ get '/function/:id' do
     function:,
     function_blob: function.to_json_full,
     functions_blob: functions.map {|x| x.to_hash}.to_json,
+    project_blob: function.project.to_json_full,
     project: function.project,
     flash: get_flash
   })
