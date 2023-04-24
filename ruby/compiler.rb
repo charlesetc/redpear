@@ -74,7 +74,7 @@ ROUTE
     File.open(@templates, "a") do |f|
       f.write(<<TEMPLATE
 #{template.name} = __mustache('#{filename}')
-def #{template.name}(*args, **kwargs) #{template.name}.call(*args, *kwargs) end
+def #{template.name}(*args, **kwargs) #{template.name}.call(*args, **kwargs) end
 TEMPLATE
       )
     end
