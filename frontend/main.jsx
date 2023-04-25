@@ -659,17 +659,6 @@ export default function Apricot() {
   return (
     <>
       <main onMouseMove={(e) => setHovered(e.target)}>
-        <h1 class="title">Apricot</h1>
-        {/* <p>
-          Global vars <button class="new-var">+ new</button>
-        </p>
-        <div class="vars"></div>
-        <p>
-          User vars &nbsp;&nbsp;<button class="new-var">+ new</button>
-        </p> */}
-        {/* <div class="vars"></div> */}
-        {/* <LocalVars /> */}
-        <br />
         <p>Page</p>
         <div class="toplevel">{value}</div>
       </main>

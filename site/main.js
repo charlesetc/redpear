@@ -13853,8 +13853,6 @@
     let value = /* @__PURE__ */ jsx(Value, { ...initialValue });
     setCurrentlySelected(value);
     return /* @__PURE__ */ jsx(Fragment, { children: /* @__PURE__ */ jsxs("main", { onMouseMove: (e) => setHovered(e.target), children: [
-      /* @__PURE__ */ jsx("h1", { class: "title", children: "Apricot" }),
-      /* @__PURE__ */ jsx("br", {}),
       /* @__PURE__ */ jsx("p", { children: "Page" }),
       /* @__PURE__ */ jsx("div", { class: "toplevel", children: value })
     ] }) });
