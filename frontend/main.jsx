@@ -1,5 +1,14 @@
 import { createSignal, createEffect, onMount, on } from "solid-js";
-import { sethtml, insertAfter, creativeName } from "./helpers.js";
+import {
+  sethtml,
+  insertAfter,
+  creativeName,
+  inputCursorAtBeginning,
+  contentEditableCursorAtBeginning,
+  insertTextAtCaret,
+} from "./helpers.js";
+
+import * as compiler from "./compiler.js";
 
 let initialValue = {
   stack: {
@@ -37,7 +46,11 @@ function removeWidget(div) {
   if (div.previousSibling) {
     setCurrentlySelected(div.previousSibling);
   } else {
-    setCurrentlySelected(div.parentNode);
+    if (div.parentNode.classList.contains("component")) {
+      setCurrentlySelected(div.parentNode);
+    } else {
+      return;
+    }
   }
   div.remove();
 }
@@ -115,6 +128,8 @@ function Stack({ contents, type: initialType }) {
   let div = (
     <div
       class="component stack"
+      tabIndex="0"
+      onFocus={() => setCurrentlySelected(div)}
       onClick={(e) => {
         if (e.target === div) {
           setCurrentlySelected(div);
@@ -137,6 +152,12 @@ function Stack({ contents, type: initialType }) {
     removeWidget(div);
     e.preventDefault();
   };
+  div.ondblclick = (e) => {
+    if (e.target === div) {
+      let chooser = Chooser({ lastSelected: div });
+      div.appendChild(chooser);
+    }
+  };
   box(div);
   return div;
 }
@@ -145,12 +166,81 @@ function Chooser({ lastSelected }) {
   let div, input;
   function closeChooser() {
     setCurrentlySelected(lastSelected);
-    div.remove();
+    try {
+      div.remove();
+    } catch (e) {
+      console.log("error removing chooser", e);
+    }
   }
+
+  function insertStack() {
+    let stack = <Stack type="vertical" contents={[]} />;
+    insertAfter(div, stack);
+    try {
+      div.remove();
+    } catch (e) {
+      console.log("error removing chooser", e);
+    }
+    window.getSelection().removeAllRanges();
+    setCurrentlySelected(stack);
+  }
+
+  function insertText() {
+    let text = <Text content="" />;
+    insertAfter(div, text);
+    try {
+      div.remove();
+    } catch (e) {
+      console.log("error removing chooser", e);
+    }
+    window.getSelection().removeAllRanges();
+    setCurrentlySelected(text);
+  }
+
+  function insertButton() {
+    console.log("trying to insert a button!");
+    let button = <Button content="submit" />;
+    insertAfter(div, button);
+    try {
+      div.remove();
+    } catch (e) {
+      console.log("error removing chooser", e);
+    }
+    window.getSelection().removeAllRanges();
+    setCurrentlySelected(button);
+  }
+
   let lines = [
-    <div class="line">stack</div>,
-    <div class="line">text</div>,
-    <div class="line">button</div>,
+    <div
+      class="line"
+      onMouseDown={(e) => {
+        insertStack();
+        e.preventDefault();
+        e.stopPropagation();
+      }}
+    >
+      stack
+    </div>,
+    <div
+      class="line"
+      onMouseDown={(e) => {
+        insertText();
+        e.preventDefault();
+        e.stopPropagation();
+      }}
+    >
+      text
+    </div>,
+    <div
+      class="line"
+      onMouseDown={(e) => {
+        insertButton();
+        e.preventDefault();
+        e.stopPropagation();
+      }}
+    >
+      button
+    </div>,
   ];
 
   let linesContainer = <div class="lines">{lines}</div>;
@@ -164,31 +254,23 @@ function Chooser({ lastSelected }) {
       onBlur={closeChooser}
       onKeyDown={(e) => {
         if (e.key === "Escape") {
-          e.preventDefault();
           closeChooser();
+          e.preventDefault();
         } else if (e.key === "Backspace" && input.value === "") {
-          e.preventDefault();
           closeChooser();
+          e.preventDefault();
+          e.stopPropagation();
         } else if (e.key === "Enter") {
           e.preventDefault();
           let results = filterLines();
           if (results.length > 0) {
             let choice = results[0];
             if (choice.textContent === "stack") {
-              let stack = <Stack type="vertical" contents={[]} />;
-              insertAfter(div, stack);
-              div.remove();
-              setCurrentlySelected(stack);
+              insertStack();
             } else if (choice.textContent === "text") {
-              let text = <Text content="" />;
-              insertAfter(div, text);
-              div.remove();
-              setCurrentlySelected(text);
+              insertText();
             } else if (choice.textContent === "button") {
-              let button = <Button content="submit" />;
-              insertAfter(div, button);
-              div.remove();
-              setCurrentlySelected(button);
+              insertButton();
             }
           }
         }
@@ -220,9 +302,7 @@ function Chooser({ lastSelected }) {
 
 let controlPressed = false;
 function slashOpensChooser(e, div, input) {
-  if (e.key === "Control") {
-    controlPressed = true;
-  } else if (e.key === "\\" && !controlPressed) {
+  if (e.key === "\\" && !controlPressed) {
     e.preventDefault();
     insertAfter(div, <Chooser lastSelected={div} />);
   } else if (e.key === "\\" && controlPressed) {
@@ -234,68 +314,74 @@ function slashOpensChooser(e, div, input) {
   }
 }
 
+function slashOpensChooserContentEditable(e, div) {
+  if (e.key === "\\" && !controlPressed) {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log("here now");
+    insertAfter(div, <Chooser lastSelected={div} />);
+  } else if (e.key === "\\" && controlPressed) {
+    insertTextAtCaret("\\");
+    e.preventDefault();
+    e.stopPropagation();
+  }
+}
+
+function doubleClickOpensChooser(div) {
+  div.ondblclick = (e) => {
+    console.log("doubleclick");
+    insertAfter(div, <Chooser lastSelected={div} />);
+  };
+}
+
 function Text({ content: initialContent }) {
-  let div, input;
-
-  function resizeToTextHeight(item) {
-    item.style.height = 0;
-    item.style.height = item.scrollHeight + "px";
-  }
-
-  function editMode() {
-    setCurrentlySelected(div);
-    if (input !== document.activeElement) {
-      input.focus();
-      input.selectionStart = input.selectionEnd = input.value.length;
-    }
-    resizeToTextHeight(input);
-  }
-
-  function displayMode() {
-    resizeToTextHeight(input);
-  }
-
-  input = (
-    <textarea
-      onFocus={editMode}
-      onBlur={displayMode}
-      onKeyDown={(e) => {
-        e.stopPropagation();
-        if (e.key === "Backspace" && input.value === "") {
-          removeWidget(div);
-          e.preventDefault(e);
-        } else {
-          slashOpensChooser(e, div, input);
-        }
-      }}
-      onKeyUp={(e) => {
-        if (e.key === "Control") {
-          controlPressed = false;
-        }
-      }}
-      onInput={() => resizeToTextHeight(input)}
-    >
-      {initialContent}
-    </textarea>
-  );
+  let div;
 
   div = (
     <div
       class="component text"
-      onClick={editMode}
+      contentEditable="true"
+      onClick={(e) => setCurrentlySelected(div)}
+      onFocus={() => setCurrentlySelected(div)}
+      onKeyDown={(e) => {
+        if (e.key === "Backspace" && contentEditableCursorAtBeginning(div)) {
+          removeWidget(div);
+          e.preventDefault(e);
+          e.stopPropagation();
+        } else if (e.key === "Enter" && !e.customDispatch) {
+          const newEvent = new KeyboardEvent("keydown", { key: "Enter" });
+          newEvent.customDispatch = true;
+          div.dispatchEvent(newEvent);
+          // all the above just to run this code after the event:
+          // nothing yet, delete above if still around later
+        } else {
+          if (window.getSelection().type !== "None")
+            slashOpensChooserContentEditable(e, div);
+        }
+      }}
       // style={boxStyles(self)}
     >
-      {input}
+      {initialContent}
     </div>
   );
   div.name = "text";
-  // wait for it to mount...
-  setTimeout(() => resizeToTextHeight(input), 4);
+
   box(div);
+  doubleClickOpensChooser(div);
   div.onSelected = () => {
-    editMode();
+    const selection = window.getSelection();
+    if (!div.contains(selection.anchorNode) && div !== selection.anchorNode) {
+      console.log("doing the range thing!!");
+      const range = document.createRange();
+      let endIndex = div.lastChild ? div.lastChild.length : 0;
+      let endNode = div.lastChild || div;
+      range.setStart(endNode, endIndex);
+      range.setEnd(endNode, endIndex);
+      range.collapse(true);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
   };
-  div.input = input;
   return div;
 }
 
@@ -321,7 +407,6 @@ function Button({ content: initialContent }) {
 
   function resizeToTextWidth() {
     input.style.width = 0;
-    // TODO: this doesn't quite work.
     input.style.width = input.scrollWidth - 20 + "px";
   }
 
@@ -330,11 +415,13 @@ function Button({ content: initialContent }) {
       value={content()}
       onBlur={(e) => sethtml(div, button)}
       onKeyDown={(e) => {
-        if (e.key === "Backspace" && content() === "") {
+        if (e.key === "Backspace" && inputCursorAtBeginning(input)) {
           removeWidget(div);
           e.preventDefault(e);
+          e.stopPropagation();
         } else {
-          slashOpensChooser(e, div, input);
+          if (window.getSelection().type !== "None")
+            slashOpensChooser(e, div, input);
         }
       }}
       onInput={(e) => {
@@ -357,6 +444,7 @@ function Button({ content: initialContent }) {
     </div>
   );
   div.name = "button";
+  doubleClickOpensChooser(div);
   box(div);
   div.onSelected = () => {
     editingMode();
@@ -539,7 +627,6 @@ function Properties({ currentlySelected }) {
       </>
     );
   } else {
-    debugger;
     throw "not a valid name";
   }
 }
@@ -580,13 +667,12 @@ export default function Apricot() {
         <p>
           User vars &nbsp;&nbsp;<button class="new-var">+ new</button>
         </p> */}
-        <div class="vars"></div>
-        <LocalVars />
+        {/* <div class="vars"></div> */}
+        {/* <LocalVars /> */}
         <br />
         <p>Page</p>
         <div class="toplevel">{value}</div>
       </main>
-      <p style="display: none">hi</p>
       {/* {properties} */}
     </>
   );
@@ -597,13 +683,46 @@ window.onload = () => {
 };
 
 document.addEventListener("keydown", (e) => {
-  console.log(e.key);
-  if (e.key === "\\") {
+  if (e.key === "Control") {
+    controlPressed = true;
+  } else if (
+    e.key === "h" &&
+    e.ctrlKey &&
+    currentlySelected()?.parentNode.classList.contains("component")
+  ) {
+    let type = currentlySelected().parentNode.type();
+    let newType = type === "horizontal" ? "vertical" : "horizontal";
+    console.log(type, newType);
+    currentlySelected().parentNode.setType(newType);
     e.preventDefault();
-    currentlySelected()?.appendChild(
-      <Chooser lastSelected={currentlySelected()} />
-    );
-  } else if (e.key === "Backspace") {
-    currentlySelected()?.backspacePressed(e);
+  } else if (currentlySelected()?.name === "stack") {
+    if (e.key === "\\") {
+      e.preventDefault();
+
+      currentlySelected().appendChild(
+        <Chooser lastSelected={currentlySelected()} />
+      );
+    } else if (e.key === "Backspace") {
+      if (currentlySelected() && currentlySelected().backspacePressed)
+        currentlySelected().backspacePressed(e);
+    }
+  } else if (e.key === "Escape") {
+    setCurrentlySelected(null);
+  }
+});
+
+document.addEventListener("keyup", (e) => {
+  if (e.key === "Control") {
+    controlPressed = false;
+  }
+});
+
+document.addEventListener("click", (e) => {
+  let toplevelValues = document.getElementsByClassName("toplevel");
+  let inAToplevel = Array.from(toplevelValues).some((value) =>
+    value.contains(e.target)
+  );
+  if (!inAToplevel) {
+    setCurrentlySelected(null);
   }
 });

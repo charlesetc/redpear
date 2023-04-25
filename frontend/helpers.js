@@ -118,3 +118,27 @@ export function creativeName() {
   let number = Math.floor(Math.random() * 10);
   return word + number;
 }
+
+export function inputCursorAtBeginning(input) {
+  return input.selectionStart === 0 && input.selectionEnd === 0;
+}
+
+export function contentEditableCursorAtBeginning(div) {
+  const selection = document.getSelection();
+  console.log("selection", selection);
+  return (
+    selection.isCollapsed &&
+    ((div.firstChild && div.firstChild.contains(selection.anchorNode)) ||
+      div.firstChild === selection.anchorNode ||
+      div === selection.anchorNode) &&
+    selection.anchorOffset === 0
+  );
+}
+
+export function insertTextAtCaret(text) {
+  const selection = window.getSelection();
+  const range = selection.getRangeAt(0);
+  range.deleteContents();
+  range.insertNode(document.createTextNode(text));
+  selection.collapseToEnd();
+}

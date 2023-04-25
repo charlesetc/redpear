@@ -3,7 +3,7 @@ const app = express();
 
 app.use(express.static("./site"));
 
-let port = 9292;
+let port = 3000;
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
