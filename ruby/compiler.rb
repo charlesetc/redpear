@@ -8,6 +8,13 @@ class ProjectDir
     @config = "#{@root}/config.ru"
     `mkdir -p #{@root}`
     `mkdir -p #{@root}/logs`
+
+    # create the store directory if it doesn't exist
+    @store = "./user-state/#{project.id}/store"
+    `mkdir -p #{@store}`
+
+    # link to the project-global store directory
+    `ln -s "../store" #{@root}/store`
     write_config
     initialize_templates
   end
@@ -35,6 +42,7 @@ END
   def write_config
     File.write(@config, <<END
 require 'sinatra'
+require 'walnut'
 require 'net/http'
 require_relative './requires.rb'
 require_relative './templates.rb'
