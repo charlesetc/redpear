@@ -1,6 +1,7 @@
 run:
-	@tmux split-pane -v make build-js
-	@APP_ENV=development rerun -d ruby,javascript,views rackup -p 9292
+	@tmux split-pane -v make build-vanilla
+	@tmux split-pane -v make build-react
+	@find ruby views | APP_ENV=development entr -c -d -r rackup -p 9292
 
 prod:
 	bash build_helpers/build_js.sh   ## no --watch
@@ -9,8 +10,11 @@ prod:
 pull:
 	git pull
 
-build-js:
-	bash build_helpers/build_js.sh  --watch
+build-vanilla:
+	bash build_helpers/build_vanilla.sh --watch
+
+build-react:
+	bash build_helpers/build_react.sh --watch
 
 irb:
 	@bundle exec irb -r walnut

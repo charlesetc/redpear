@@ -19,8 +19,9 @@
         pageContext.templates = {{& templates_blob}}
         pageContext.domain = "{{domain}}"
     </script>
-    <script src='/js/main.js'></script>
-    <script src='/js/components/project-operations.js'></script>
+    <script src='/js/react/index.js'></script>
+    <script src='/js/vanilla/main.js'></script>
+    <script src='/js/vanilla/components/project-operations.js'></script>
 </head>
 
 <body>
@@ -42,6 +43,8 @@
                 <button type='submit'>New</button>
             </form>
         </section>
+
+        <div id='react-root'></div>
 
         <section class='template-index'>
             <h3>Templates</h3>
