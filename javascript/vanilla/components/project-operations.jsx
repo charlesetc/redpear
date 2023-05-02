@@ -2,7 +2,7 @@ import { createSignal, createEffect } from "solid-js";
 import { createNameInput } from "./name-input";
 
 
-const [nameInput, measure] = createNameInput(pageContext.project.name, saveName)
+const [nameInput, measure] = createNameInput(pageContext.project.name, saveName, { allowSpaces: true })
 
 function saveName() {
   const name = nameInput.value;

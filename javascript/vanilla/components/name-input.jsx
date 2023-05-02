@@ -1,5 +1,5 @@
 
-export function createNameInput(initialValue, saveName, { onInput } = { onInput: null }) {
+export function createNameInput(initialValue, saveName, { onInput, allowSpaces } = { onInput: null, allowSpaces: null }) {
   const measure = <pre class='measure'></pre>
   const doneButton = <button style='display:none'>Done</button>;
 
@@ -27,8 +27,8 @@ export function createNameInput(initialValue, saveName, { onInput } = { onInput:
         }
       }}
       onInput={() => {
-        self.value = self.value.replace(/ /g, '');
-        onInput();
+        if (!allowSpaces) self.value = self.value.replace(/ /g, '');
+        if (onInput) onInput();
         resizeToWidth()
       }}
       type='text'

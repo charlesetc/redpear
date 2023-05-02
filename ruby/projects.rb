@@ -61,6 +61,19 @@ get '/project/:id' do
   })
 end
 
+get '/api/project/:id' do
+  content_type :json
+  project = get_project(params[:id])
+  functions = :function.findmany(project: project, deleted: false).sort_by { |p| p.created_at }
+  html_templates = :html_template.findmany(project: project, deleted: false).sort_by { |p| p.created_at }
+  {
+    user: current_user.to_hash,
+    project: project.to_hash,
+    functions: functions.map(&:to_hash),
+    html_templates: html_templates.map(&:to_hash),
+  }.to_json
+end
+
 post '/project/edit' do
   json_params
   project = get_project(params[:id])

@@ -157,9 +157,9 @@ export function fancyCompletions(context) {
   if (isForm) {
     return {
       from: isForm.from,
-      options: routeActions.map((fn: any) => {
+      options: routeActions.filter((fn) => fn.route.method === 'post').map((fn: any) => {
         return {
-          label: `<form action="${fn.route.pattern}" method="post">\n    \n</form>`,
+          label: `<form action="${fn.route.pattern}" method="${fn.route.method}">\n    \n</form>`,
           type: "text",
         }
       })
