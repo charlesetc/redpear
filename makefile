@@ -17,6 +17,9 @@ build-vanilla:
 build-react:
 	bash build_helpers/build_react.sh --watch
 
+rsync: 
+	find ruby javascript views static | entr rsync -v -a ./ redpear:~/redpear-rsync
+
 irb:
 	@bundle exec irb -r walnut
 
