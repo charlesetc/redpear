@@ -23,7 +23,7 @@ function ProjectList() {
       </ul>
       <form method='post' onSubmit={async (e) => {
         e.preventDefault()
-        await fetchPost(`/project/new`, {})
+        await fetchPost(`/project/new`)
         mutate(`/api/project/list`)
       }}><button type='submit'
         disabled={

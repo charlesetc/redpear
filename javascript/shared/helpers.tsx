@@ -15,7 +15,7 @@ export function formPost(path: string, params: Map<string, any>) {
   form.submit();
 }
 
-export async function fetchPost(path: string, params: Map<string, any>) {
+export async function fetchPost(path: string, params = {}) {
   let response = await fetch(path, {
     method: "POST",
     body: JSON.stringify(params),
