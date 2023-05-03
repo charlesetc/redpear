@@ -1,14 +1,12 @@
 import React from 'react';
 import { useState } from 'react';
 import { styled, globalCss } from '@stitches/react';
-
 import useSWR from 'swr';
+import { fetcher } from './helpers';
+
 const Container = styled('section', {
   padding: '100px',
 })
-
-const fetcher = (...args) => fetch(...args).then(res => res.json())
-
 
 function App(b) {
   const id = window.location.pathname.split('/').at(-1)
@@ -17,7 +15,6 @@ function App(b) {
   const [name, setName] = useState('John Doe');
   const [age, setAge] = useState(0);
 
-  // TODO: implement that api
   if (error) return <div>failed to load</div>
   if (isLoading) return <div>loading...</div>
 

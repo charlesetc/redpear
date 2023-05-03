@@ -9,23 +9,18 @@
     <link rel="shortcut icon" type="image/ico" href="/favicon.ico" />
     <link rel="stylesheet" href="/basic.css" />
     <link rel="stylesheet" href="/project.css" />
+    <script src='/js/react/index.js'></script>
 </head>
 
 <body>
-    <section class="main">
+    <section class="main spaced">
         <h1 class="main-title">
             Red Pear
         </h1>
 
         <p>Welcome {{user.email}} <a href='/log-out'>Log out</a></p>
 
-        <h4>Projects</h4>
-        <ul class='project-index'>
-            {{#projects}}
-            <li><a href='/project/{{id}}'>{{name}}</a></li>
-            {{/projects}}
-        </ul>
-        <form method='post' action='/project/new'><button type='submit'>New Project</button></form>
+        <project-list class='spaced'></project-list>
     </section>
 
 

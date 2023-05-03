@@ -37,22 +37,23 @@ body {
     margin: auto;
 }
 
-.main > * {
+.spaced > * {
     margin-top: 10px
 }
 
-.main section > *:not(:first-child) {
+.spaced section > *:not(:first-child) {
     margin-top: 10px
 }
 
 
-.main > h1, .main > h2, .main > h3, .main > h4 {
+.spaced > h1, .spaced > h2, .spaced > h3, .spaced > h4 {
     margin-top: 24px
 }
 
-.main > p {
+.spaced > p {
     margin-top: 15px
 }
+
 
 
 table {
@@ -124,13 +125,18 @@ button {
     position: relative;
 }
 
-button:hover {
+button:not([disabled]):hover {
     background: #ccc;
 }
 
-button:active {
+button:not([disabled]):active {
     background: black;
     color: white;
+}
+
+button[disabled] {
+    opacity: 0.3;
+    cursor: not-allowed;
 }
 
 select {

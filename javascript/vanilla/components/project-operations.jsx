@@ -1,7 +1,6 @@
 import { createSignal, createEffect } from "solid-js";
 import { createNameInput } from "./name-input";
 
-
 const [nameInput, measure] = createNameInput(pageContext.project.name, saveName, { allowSpaces: true })
 
 function saveName() {
@@ -161,7 +160,6 @@ function FunctionsTable() {
 
 
 function TemplateRow(template) {
-  console.log(template);
   return (
     <tr>
       <td><a href={`/template/${template.id}`}>{template.name}</a>

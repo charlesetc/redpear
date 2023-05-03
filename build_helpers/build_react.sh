@@ -1,7 +1,7 @@
 #!/bin/bash
-esbuild $(find javascript/react -type f) \
+esbuild javascript/react/index.tsx \
     --outdir=static/js/react \
     --sourcemap \
 	--jsx=automatic \
-    --bundle \
+	--bundle \
     "$@"

@@ -56,7 +56,7 @@ module ServerProcesses
   end
 
   def self.start_all()
-    :project.all.each do |project|
+    :project.findmany(deleted: false).each do |project|
       project.prod_pid = nil unless project.has_field?(:prod_pid) # remove after all projects do
       project.dev_pid = nil unless project.has_field?(:dev_pid) # remove after all projects do
 

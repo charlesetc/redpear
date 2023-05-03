@@ -13,6 +13,19 @@ get '/' do
   end
 end
 
+get '/api/project/list' do
+  if session[:user]
+    content_type :json
+    user = current_user
+    projects = :project.findmany(user: user, deleted: false).sort_by { |p| p.created_at }
+    projects.map(&:to_hash).to_json
+  else
+    status 403
+    "not logged in"
+  end
+end
+
+
 get "/project/?" do
   redirect_secure("/")
 end
