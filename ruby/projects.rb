@@ -109,7 +109,8 @@ get '/project/:id/dev' do
   end
 end
 
-get '/project/deploy' do
+post '/project/deploy' do
+  json_params
   project = get_project(params[:id])
-  ServerProcess.restart(project, :prod)
+  ServerProcesses.restart(project, :prod)
 end

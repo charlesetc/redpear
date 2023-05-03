@@ -31,6 +31,9 @@ function TemplateOperations() {
   return <>
     <button onclick={maybeDeleteTemplate}>Delete</button>
     <button onclick={() => nameInput.focus()}>Rename</button>
+    <a href={`/project/${pageContext.project.id}/dev`} target='_blank'>
+      <button>Dev<span class='icon'><img src="/icons/external-link.svg" /></span></button>
+    </a >
     <a href={`/project/${pageContext.project.id}/prod`} target='_blank'>
       <button>Prod<span class='icon'><img src="/icons/external-link.svg" /></span></button>
     </a>

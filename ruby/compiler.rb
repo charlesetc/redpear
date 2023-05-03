@@ -1,7 +1,7 @@
 class ProjectDir
-  def initialize(project, mode)
+  def initialize(project:, mode:)
     timestamp = Time.now.utc.strftime('%Y-%m-%dT%H:%M:%S')
-    @root = "./user-state/#{project.id}/#{mode}-#{timestamp}"
+    @root = "./user-state/#{mode}/#{project.id}/#{timestamp}"
     @requires = "#{@root}/requires.rb"
     @routes = "#{@root}/routes.rb"
     @templates = "#{@root}/templates.rb"
@@ -10,14 +10,16 @@ class ProjectDir
     `mkdir -p #{@root}/logs`
 
     # create the store directory if it doesn't exist
-    @store = "./user-state/#{project.id}/store"
+    @store = "./user-state/#{mode}/#{project.id}/store"
     `mkdir -p #{@store}`
 
     # link to the project-global store directory
     `ln -s "../store" #{@root}/store`
     write_config
     initialize_templates
-    :project_dir.(mode:, project:, root: @root)
+
+    project.prod_root = @root if mode == :prod
+    project.dev_root = @root if mode == :dev
   end
 
   def root
@@ -101,8 +103,8 @@ TEMPLATE
 end
 
 module Compiler
-  def self.compile_project(project, mode)
-    dir = ProjectDir.new(project, mode)
+  def self.compile_project(project:, mode:)
+    dir = ProjectDir.new(project:, mode:)
     :html_template.findmany(project:, deleted: false).each do |html_template|
       dir.write_html_template(html_template)
     end
