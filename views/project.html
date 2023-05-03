@@ -58,6 +58,23 @@
                 <button type='submit'>New Fancy</button>
             </form> -->
         </section>
+
+        <section class='logs'>
+            <h3 style="margin-bottom:20px">Logs</h3>
+
+            <table class='small-first'>
+                <tr>
+                    <td>Prod:</td>
+                    <td><a href='/project/{{project.id}}/prod/out'>Stdout</a></td>
+                    <td><a href='/project/{{project.id}}/prod/err'>Stderr</a></td>
+                </tr>
+                <tr>
+                    <td>Dev:</td>
+                    <td><a href='/project/{{project.id}}/dev/out'>Stdout</a></td>
+                    <td><a href='/project/{{project.id}}/dev/err'>Stderr</a></td>
+                </tr>
+            </table>
+        </section>
         <!--
         <section>
             <h3>Data</h3>

@@ -37,9 +37,10 @@ body {
     margin: auto;
 }
 
-.spaced > * {
+.spaced > *:not(:first-child) {
     margin-top: 10px
 }
+
 
 .spaced section > *:not(:first-child) {
     margin-top: 10px
@@ -72,6 +73,11 @@ th, td {
 td a {
     display: inline-block;
     width: 100%;
+}
+
+table.small-first td:first-child {
+    width: 30px;
+    padding-right: 0px;
 }
 
 td {

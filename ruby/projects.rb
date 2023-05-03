@@ -122,6 +122,26 @@ get '/project/:id/dev' do
   end
 end
 
+get '/project/:id/prod/out' do
+  project = get_project(params[:id])
+  send_file project.prod_root + '/logs/stdout.log'
+end
+
+get '/project/:id/prod/err' do
+  project = get_project(params[:id])
+  send_file project.prod_root + '/logs/stderr.log'
+end
+
+get '/project/:id/dev/out' do
+  project = get_project(params[:id])
+  send_file project.dev_root + '/logs/stdout.log'
+end
+
+get '/project/:id/dev/err' do
+  project = get_project(params[:id])
+  send_file project.dev_root + '/logs/stderr.log'
+end
+
 post '/project/deploy' do
   json_params
   project = get_project(params[:id])

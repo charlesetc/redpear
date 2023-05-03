@@ -131,3 +131,17 @@ table:not(.route-editor-focused) tr:hover .add-route  {
 .template-index td:nth-child(2) {
     text-align: center;
 }
+
+.main section {
+    padding-top: 25px;
+    padding-bottom: 20px;
+}
+
+
+.logs table {
+    margin-bottom: 0px;
+}
+
+.logs table td {
+    padding-top: 4px;
+}
