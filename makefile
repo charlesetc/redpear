@@ -4,7 +4,8 @@ run:
 	@find ruby views | APP_ENV=development entr -c -d -r rackup -p 9292
 
 prod:
-	bash build_helpers/build_js.sh   ## no --watch
+	bash build_helpers/build_vanilla.sh   ## no --watch
+	bash build_helpers/build_react.sh   ## no --watch
 	APP_ENV=production bundle exec rackup -p 9292
 
 pull:
