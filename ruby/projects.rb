@@ -44,6 +44,8 @@ post '/project/new' do
     dev_port: nil,
   ) if current_user
   LOG.info("redirecting" + session[:user].to_s)
+  ServerProcesses::restart(project, :prod)
+  ServerProcesses::restart(project, :dev)
   redirect_secure("/")
   # redirect("/projects/#{project.id}")
 end
