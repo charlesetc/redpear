@@ -56,7 +56,7 @@ post '/function/edit' do
   function.source = params[:source] if params.key?(:source)
   function.route = params[:route] if params.key?(:route)
   function.name = params[:name] if params.key?(:name)
-  ServerProcesses::restart(function.project)
+  ServerProcesses::restart(function.project, :dev)
   redirect back
 end
 
@@ -64,5 +64,5 @@ post '/function/delete' do
   function = get_function(params[:id])
   function.deleted = true
   ServerProcesses::restart(function.project)
-  redirect_secure("/project/#{function.project.id}")
+  redirect_secure("/project/#{function.project.id}", :dev)
 end

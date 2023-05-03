@@ -25,8 +25,10 @@ post '/project/new' do
     name:,
     user: current_user,
     deleted: false,
-    pid: nil,
-    port: nil,
+    prod_pid: nil,
+    dev_pid: nil,
+    prod_port: nil,
+    dev_port: nil,
   ) if current_user
   LOG.info("redirecting" + session[:user].to_s)
   redirect_secure("/")
@@ -94,7 +96,7 @@ get '/project/:id/prod' do
   if IS_PROD
     redirect "https://#{project.id}.#{DOMAIN}"
   else
-    redirect "http://#{request.host}:#{project.port}"
+    redirect "http://#{request.host}:#{project.prod_port}"
   end
 end
 
@@ -103,6 +105,11 @@ get '/project/:id/dev' do
   if IS_PROD
     redirect "https://#{project.id}.dev.#{DOMAIN}"
   else
-    redirect "http://#{request.host}:#{project.port}"
+    redirect "http://#{request.host}:#{project.dev_port}"
   end
+end
+
+get '/project/deploy' do
+  project = get_project(params[:id])
+  ServerProcess.restart(project, :prod)
 end

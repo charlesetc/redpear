@@ -1,7 +1,7 @@
 class ProjectDir
-  def initialize(project)
+  def initialize(project, mode)
     timestamp = Time.now.utc.strftime('%Y-%m-%dT%H:%M:%S')
-    @root = "./user-state/#{project.id}/#{timestamp}"
+    @root = "./user-state/#{project.id}/#{mode}-#{timestamp}"
     @requires = "#{@root}/requires.rb"
     @routes = "#{@root}/routes.rb"
     @templates = "#{@root}/templates.rb"
@@ -17,14 +17,11 @@ class ProjectDir
     `ln -s "../store" #{@root}/store`
     write_config
     initialize_templates
+    :project_dir.(mode:, project:, root: @root)
   end
 
   def root
     @root
-  end
-
-  def log_directives
-    return { out: "#{@root}/logs/stdout.log", err: "#{@root}/logs/stderr.log" }
   end
 
   def initialize_templates
@@ -104,14 +101,14 @@ TEMPLATE
 end
 
 module Compiler
-  def self.compile_project(project)
-    dir = ProjectDir.new(project)
+  def self.compile_project(project, mode)
+    dir = ProjectDir.new(project, mode)
     :html_template.findmany(project:, deleted: false).each do |html_template|
       dir.write_html_template(html_template)
     end
     :function.findmany(project:, deleted: false).each do |function|
       dir.write_function(function)
     end
-    return dir
+    return dir.root
   end
 end

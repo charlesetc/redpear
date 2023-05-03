@@ -29,7 +29,8 @@ module Caddy
 
     def self.config()
       project_routes = :project.all.map do |project|
-        reverse_proxy(project.id + ".#{DOMAIN}", project.port)
+        reverse_proxy(project.id + ".#{DOMAIN}", project.prod_port)
+        reverse_proxy(project.id + ".dev.#{DOMAIN}", project.dev_port)
       end
 
 
