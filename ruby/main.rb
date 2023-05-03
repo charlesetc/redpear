@@ -22,6 +22,18 @@ set :public_folder, "static"
 LOG = Logger.new(STDOUT)
 set :logger, LOG
 
+def profile(label = "unnamed")
+  starting = Time.now
+  res = yield
+  ending = Time.now
+  LOG.info("PROFILE -- #{label} took #{ending - starting}s")
+  if ending - starting > 2
+    LOG.info "DYING TOO LONG"
+    exit
+  end
+  return res
+end
+
 module Sinatra
   module Flash
     def flash(message)
