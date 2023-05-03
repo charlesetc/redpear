@@ -1,8 +1,8 @@
 import React from 'react';
 import wire from './wire'
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import { fetcher } from './helpers';
-
+import { fetchPost } from '../shared/helpers';
 
 function ProjectList() {
   const { data, error, isLoading } = useSWR(`/api/project/list`, fetcher)
@@ -21,15 +21,21 @@ function ProjectList() {
           </li>
         ))}
       </ul>
-      <form method='post' action='/project/new'><button type='submit'
+      <form method='post' onSubmit={async (e) => {
+        e.preventDefault()
+        await fetchPost(`/project/new`, {})
+        mutate(`/api/project/list`)
+      }}><button type='submit'
         disabled={
           projects.length >= 5
         }
       >New Project</button>
-      </form>
-      {projects.length >= 5 && <p>
-        The maximum number of projects is 5. Please delete a project before creating a new one.
-      </p>}
+      </form >
+      {
+        projects.length >= 5 && <p>
+          The maximum number of projects is 5. Please delete a project before creating a new one.
+        </p>
+      }
     </>
   );
 }
