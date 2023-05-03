@@ -9,6 +9,10 @@ class ProjectDir
     `mkdir -p #{@root}`
     `mkdir -p #{@root}/logs`
 
+    `touch #{@requires}`
+    `touch #{@routes}`
+    `touch #{@templates}`
+
     # create the store directory if it doesn't exist
     @store = "./user-state/#{mode}/#{project.id}/store"
     `mkdir -p #{@store}`
