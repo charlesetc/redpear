@@ -26,6 +26,7 @@ module ServerProcesses
     walnut = File.expand_path("../walnut")
     rbenv = File.expand_path("~/.rbenv")
     gems = File.expand_path("~/.gem")
+    vendor = File.expand_path("./vendor")
     raise "invalid project root #{project_root}" unless project_root.include?("redpear/user-state")
     if IS_PROD
       [
@@ -44,6 +45,7 @@ module ServerProcesses
         "--ro-bind", gems, gems,
         "--ro-bind", gemfile, gemfile,
         "--ro-bind", walnut, walnut,
+        "--ro-bind", vendor, vendor,
         "--dev", "/dev",
       ]
     else
