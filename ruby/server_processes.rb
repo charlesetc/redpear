@@ -51,19 +51,21 @@ module ServerProcesses
     end
   end
 
-  def self.rackup(project:, project_root:, mode:)
+  self.spawn(port, project_root:)
     log_directives = { out: "#{project_root}/logs/stdout.log", err: "#{project_root}/logs/stderr.log" }
+    Process.spawn(*bwrap(project_root), "bundle", "exec", "rackup", "-p", dev_port.inspect, chdir: project_root, **log_directives)
+  end
 
+  def self.rackup(project:, project_root:, mode:)
     if mode == :prod
       prod_port = Ports::find_unused()
-      prod_pid = Process.spawn("rackup", "-p", prod_port.inspect, chdir: project_root, **log_directives)
+      prod_pid = spawn(prod_port, project_root:)
       project.prod_port = prod_port
       project.prod_pid = prod_pid
       LOG.info "started prod process #{prod_pid.inspect} for #{project.name} on port #{prod_port.inspect}"
     elsif mode == :dev
       dev_port = Ports::find_unused()
-      # TODO: use dev sinatra mode for this
-      dev_pid = Process.spawn(*bwrap(project_root), "bundle", "exec", "rackup", "-p", dev_port.inspect, chdir: project_root, **log_directives)
+      dev_pid = spawn(dev_port, project_root:)
       project.dev_port = dev_port
       project.dev_pid = dev_pid
       LOG.info "started dev process #{dev_pid.inspect} for #{project.name} on port #{dev_port.inspect}"
