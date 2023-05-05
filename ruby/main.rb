@@ -59,8 +59,11 @@ module Sinatra
 
   module SecureRedirects
     def redirect(path, *args)
-      request.secure = true if IS_PROD
-      path = to(path)
+      uri = to(path)
+
+      if IS_PROD && URI(uri).host == request.host
+        uri = uri.gsub("http://", "https://")
+      end
 
       if (env['HTTP_VERSION'] == 'HTTP/1.1') && (env['REQUEST_METHOD'] != 'GET')
         status 303
@@ -70,7 +73,7 @@ module Sinatra
 
       # According to RFC 2616 section 14.30, "the field value consists of a
       # single absolute URI"
-      response['Location'] = uri(path.to_s, settings.absolute_redirects?, settings.prefixed_redirects?)
+      response['Location'] = uri(uri.to_s, settings.absolute_redirects?, settings.prefixed_redirects?)
       halt(*args)
     end
   end
