@@ -22,6 +22,7 @@ module ServerProcesses
 
   def self.bwrap(project_root)
     project_root = File.expand_path(project_root)
+    gemfile = File.expand_path("./Gemfile")
     raise "invalid project root #{project_root}" unless project_root.include?("redpear/user-state")
     if IS_PROD
       [
@@ -37,6 +38,7 @@ module ServerProcesses
         "--ro-bind", "/lib64", "/lib64",
         "--ro-bind", "/home/charles/.rbenv", "/home/charles/.rbenv",
         "--ro-bind", "/proc/self", "/proc/self",
+        "--ro-bind", gemfile, gemfile,
         "--dev", "/dev",
       ]
     else
