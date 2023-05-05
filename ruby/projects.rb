@@ -27,7 +27,7 @@ end
 
 
 get "/project/?" do
-  redirect_secure("/")
+  redirect("/")
 end
 
 post '/project/new' do
@@ -46,7 +46,7 @@ post '/project/new' do
   LOG.info("redirecting" + session[:user].to_s)
   ServerProcesses::restart(project, :prod)
   ServerProcesses::restart(project, :dev)
-  redirect_secure("/")
+  redirect("/")
   # redirect("/projects/#{project.id}")
 end
 
@@ -54,11 +54,11 @@ def get_project(id)
   project = :project.findone(id:,)
   if not project
     flash 'no such project'
-    redirect_secure('/')
+    redirect('/')
   end
   if project.user != current_user
     flash 'denied'
-    redirect_secure('/')
+    redirect('/')
   end
   return project
 end
@@ -95,7 +95,7 @@ post '/project/edit' do
   json_params
   project = get_project(params[:id])
   project.name = params[:name]
-  redirect_secure back
+  redirect back
 end
 
 post '/project/delete' do
@@ -103,7 +103,7 @@ post '/project/delete' do
   :function.findmany(project: project).each { |function| function.deleted = true }
   :html_template.findmany(project: project).each { |template| template.deleted = true }
   project.deleted = true
-  redirect_secure("/")
+  redirect("/")
 end
 
 get '/project/:id/prod' do

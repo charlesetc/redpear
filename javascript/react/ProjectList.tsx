@@ -7,9 +7,11 @@ import { fetchPost } from '../shared/helpers';
 function ProjectList() {
   const { data, error, isLoading } = useSWR(`/api/project/list`, fetcher)
   const projects = data;
+  const [secondPassed, setSecondPassed] = React.useState(false);
+  setTimeout(() => setSecondPassed(true), 1000);
 
   if (error) return <div>failed to load</div>
-  if (isLoading) return <div>loading projects...</div>
+  if (isLoading) return <div>{secondPassed ? "loading..." : ""}</div>
 
   return (
     <>

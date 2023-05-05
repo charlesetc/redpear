@@ -57,18 +57,18 @@ module Sinatra
     end
   end
 
-  module RedirectSecure
-    def redirect_secure(path)
-      if IS_PROD
-        path = "" if path == "/"
-        redirect "https://#{request.host}/#{path}"
-      else
-        redirect path
-      end
-    end
+  helpers Flash, JSONParams
+end
+
+class SecureRequests
+  def initialize(app)
+    @app = app
   end
 
-  helpers Flash, JSONParams, RedirectSecure
+  def call(env)
+    request.secure = true if IS_PROD
+    @app.call(env)
+  end
 end
 
 def current_user
@@ -86,12 +86,12 @@ post '/sign-up' do
     :user.(email:, salt:, hash:)
     session[:user] = email
   end
-  redirect_secure('/')
+  redirect('/')
 end
 
 get '/log-out' do
   session[:user] = nil
-  redirect_secure('/')
+  redirect('/')
 end
 
 post '/log-in' do
@@ -103,7 +103,7 @@ post '/log-in' do
   hash = BCrypt::Engine::hash_secret(password, user.salt)
   if user.hash == hash
     session[:user] = email
-    redirect_secure('/')
+    redirect('/')
   else
     return 'incorrect email or password'
   end
