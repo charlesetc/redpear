@@ -20,6 +20,29 @@ module ServerProcesses
     self.kill_process(project, self.get_pid(project:, mode:))
   end
 
+  def self.bwrap(project_root)
+    # TODO: validate project_root
+    if false
+      [
+        "bwrap",
+        "--die-with-parent",
+        "--unshare-all",
+        "--share-net",
+        "--chdir", project_root,
+        "--bind", project_root, project_root,
+        "--ro-bind", "/usr", "/usr",
+        "--ro-bind", "/lib", "/lib",
+        "--ro-bind", "/lib32", "/lib32",
+        "--ro-bind", "/lib64", "/lib64",
+        "--ro-bind", "/home/charles/.rbenv", "/home/charles/.rbenv",
+        "--ro-bind", "/proc/self", "/proc/self",
+        "--dev", "/dev",
+      ]
+    else
+      []
+    end
+  end
+
   def self.rackup(project:, project_root:, mode:)
     log_directives = { out: "#{project_root}/logs/stdout.log", err: "#{project_root}/logs/stderr.log" }
 
@@ -32,7 +55,7 @@ module ServerProcesses
     elsif mode == :dev
       dev_port = Ports::find_unused()
       # TODO: use dev sinatra mode for this
-      dev_pid = Process.spawn("rackup", "-p", dev_port.inspect, chdir: project_root, **log_directives)
+      dev_pid = Process.spawn(*bwrap(project_root), "rackup", "-p", dev_port.inspect, chdir: project_root, **log_directives)
       project.dev_port = dev_port
       project.dev_pid = dev_pid
       LOG.info "started dev process #{dev_pid.inspect} for #{project.name} on port #{dev_port.inspect}"

@@ -17,6 +17,10 @@ module Caddy
         handle: [
           {
             handler: "reverse_proxy",
+            "load_balancing": {
+                "try_duration": 5000000000,
+                "try_interval": 500000000
+            },
             upstreams: [
               {
                 dial: "localhost:#{port}"
