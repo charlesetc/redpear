@@ -25,7 +25,7 @@ project-name button {
     padding-bottom: 6px;
 }
 
-project-operations {
+project-ops {
     display: flex;
     gap: 6px;
     margin-bottom: 20px;

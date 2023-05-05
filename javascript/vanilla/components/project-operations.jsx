@@ -2,6 +2,7 @@ import { createSignal, createEffect } from "solid-js";
 import { createNameInput } from "./name-input";
 
 const [nameInput, measure] = createNameInput(pageContext.project.name, saveName, { allowSpaces: true })
+window.nameInput = nameInput;
 
 function saveName() {
   const name = nameInput.value;
@@ -13,13 +14,6 @@ function saveName() {
   }
 }
 
-function maybeDeleteProject() {
-  if (confirm("This will delete the entire project. Are you sure?")) {
-    if (confirm("Really? All the functions will be deleted too. Last chance.")) {
-      formPost('/project/delete', { id: pageContext.project.id });
-    }
-  }
-}
 
 
 function ProjectName() {
@@ -31,22 +25,6 @@ function ProjectName() {
 
 function deployToProd() {
   fetchPost('/project/deploy', { id: pageContext.project.id })
-}
-
-function ProjectOperations() {
-  return (
-    <>
-      <button onclick={maybeDeleteProject}>Delete</button>
-      <button onclick={() => nameInput.focus()}>Rename</button>
-      <button onclick={deployToProd}>Deploy to Prod</button>
-      <a href={`/project/${pageContext.project.id}/dev`} target='_blank'>
-        <button>Dev<span class='icon'><img src="/icons/external-link.svg" /></span></button>
-      </a >
-      <a class='prod' href={`/project/${pageContext.project.id}/prod`} target='_blank'>
-        <button>Prod<span class='icon'><img src="/icons/external-link.svg" /></span></button>
-      </a>
-    </>
-  )
 }
 
 
@@ -195,6 +173,6 @@ function maybeDelete(thing, { id }) {
 }
 
 document.hotwire(ProjectName)
-document.hotwire(ProjectOperations)
+// document.hotwire(ProjectOperations)
 document.hotwire(FunctionsTable)
 document.hotwire(TemplatesTable)

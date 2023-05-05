@@ -1,7 +1,8 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
-import './ProjectList'
+import './ProjectList';
+import './ProjectOps';
 
 if (false) {
   document.addEventListener('DOMContentLoaded', () => {

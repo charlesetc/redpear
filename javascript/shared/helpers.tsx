@@ -1,4 +1,4 @@
-export function formPost(path: string, params: Map<string, any>) {
+export function formPost(path: string, params) {
   const form = document.createElement('form');
   form.method = "POST"
   form.action = path;
