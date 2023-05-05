@@ -22,7 +22,7 @@ module ServerProcesses
 
   def self.bwrap(project_root)
     # TODO: validate project_root
-    if false
+    if IS_PROD
       [
         "bwrap",
         "--die-with-parent",
