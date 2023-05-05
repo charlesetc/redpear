@@ -27,7 +27,8 @@ module ServerProcesses
     rbenv = File.expand_path("~/.rbenv")
     gems = File.expand_path("~/.gem")
     vendor = File.expand_path("./vendor")
-    store = File.expand_path(project_root + "/../store")
+    store = File.join(project_root, "store")
+    store_home = File.expand_path(project_root + "/../store")
     raise "invalid project root #{project_root}" unless project_root.include?("redpear/user-state")
     if IS_PROD
       [
@@ -48,6 +49,7 @@ module ServerProcesses
         "--ro-bind", walnut, walnut,
         "--ro-bind", vendor, vendor,
         "--ro-bind", store, store,
+        "--ro-bind", store_home, store_home,
         "--dev", "/dev",
       ]
     else
