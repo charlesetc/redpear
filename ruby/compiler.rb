@@ -21,6 +21,7 @@ class ProjectDir
     `ln -s "../store" #{@root}/store`
     write_config
     initialize_templates
+    add_secure_redirects
 
     project.prod_root = @root if mode == :prod
     project.dev_root = @root if mode == :dev
@@ -50,8 +51,27 @@ require 'net/http'
 require_relative './requires.rb'
 require_relative './templates.rb'
 require_relative './routes.rb'
+require_relative './secure_redirects.rb'
 
 run Sinatra::Application
+END
+    )
+  end
+
+  def add_secure_redirects
+    File.write("#{@root}/secure_redirects.rb", <<END
+module Sinatra
+  module SecureRedirects
+    def redirect(path, *args)
+      uri = to(path)
+      if URI(uri).host == request.host
+        uri = uri.gsub("http://", "https://")
+      end
+      super(uri, *args)
+    end
+  end
+  helpers SecureRedirects
+end
 END
     )
   end
