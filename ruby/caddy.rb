@@ -18,8 +18,8 @@ module Caddy
           {
             handler: "reverse_proxy",
             "load_balancing": {
-                "try_duration": 5000000000,
-                "try_interval": 500000000
+                "try_duration": 2500000000,
+                "try_interval": 200000000
             },
             upstreams: [
               {
