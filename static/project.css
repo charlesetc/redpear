@@ -145,4 +145,5 @@ table:not(.route-editor-focused) tr:hover .add-route  {
 
 .logs table td {
     padding-top: 4px;
+    min-width: inherit;
 }
