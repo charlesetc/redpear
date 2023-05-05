@@ -72,6 +72,6 @@ end
 post '/template/delete' do
   template = get_html_template(params[:id])
   template.deleted = true
-  ServerProcesses::restart(template.project)
+  ServerProcesses::restart(template.project, :dev)
   redirect("/project/#{template.project.id}", :dev)
 end
