@@ -17,19 +17,33 @@ function deployToProd() {
   fetchPost('/project/deploy', { id: pageContext.project.id })
 }
 
+function prodButtons() {
+  const [deploying, setDeploying] = React.useState(false)
+  const DeployButton = <button onClick={() => {
+    setDeploying(true);
+    setTimeout(() => setDeploying(false), 700);
+    deployToProd();
+  }} disabled={deploying}>{deploying ? <>&nbsp;&nbsp;&nbsp;Deploying...&nbsp;&nbsp;</> : "Deploy to Prod"}</button>;
+  const ProdButton =
+    <a className='prod' href={`/project/${pageContext.project.id}/prod`} target='_blank'>
+      <button disabled={deploying}>Prod<span className='icon'><img src="/icons/external-link.svg" /></span></button>
+    </a>;
+
+  return [DeployButton, ProdButton]
+}
+
 function ProjectOps() {
+  const [DeployButton, ProdButton] = prodButtons();
   return (
     <>
       <>
         <button onClick={maybeDeleteProject}>Delete</button>
         <button onClick={() => window.nameInput.focus()}>Rename</button>
-        <button onClick={deployToProd}>Deploy to Prod</button>
+        {DeployButton}
         <a href={`/project/${pageContext.project.id}/dev`} target='_blank'>
           <button>Dev<span className='icon'><img src="/icons/external-link.svg" /></span></button>
         </a >
-        <a className='prod' href={`/project/${pageContext.project.id}/prod`} target='_blank'>
-          <button>Prod<span className='icon'><img src="/icons/external-link.svg" /></span></button>
-        </a>
+        {ProdButton}
       </>
     </>
   );
