@@ -63,7 +63,7 @@ module ServerProcesses
     elsif mode == :dev
       dev_port = Ports::find_unused()
       # TODO: use dev sinatra mode for this
-      dev_pid = Process.spawn(*bwrap(project_root), "rackup", "-p", dev_port.inspect, chdir: project_root, **log_directives)
+      dev_pid = Process.spawn(*bwrap(project_root), "bundle", "exec", "rackup", "-p", dev_port.inspect, chdir: project_root, **log_directives)
       project.dev_port = dev_port
       project.dev_pid = dev_pid
       LOG.info "started dev process #{dev_pid.inspect} for #{project.name} on port #{dev_port.inspect}"
