@@ -47,7 +47,7 @@ module ServerProcesses
         "--ro-bind", gemfile, gemfile,
         "--ro-bind", walnut, walnut,
         "--ro-bind", vendor, vendor,
-        "--ro-bind", store_home, store_home,
+        "--bind", store_home, store_home,
         "--dev", "/dev",
       ]
     else
