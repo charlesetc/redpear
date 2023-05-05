@@ -63,6 +63,6 @@ end
 post '/function/delete' do
   function = get_function(params[:id])
   function.deleted = true
-  ServerProcesses::restart(function.project)
+  ServerProcesses::restart(function.project, :dev)
   redirect("/project/#{function.project.id}", :dev)
 end
