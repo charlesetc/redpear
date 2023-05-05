@@ -57,18 +57,25 @@ module Sinatra
     end
   end
 
-  helpers Flash, JSONParams
-end
+  module SecureRedirects
+    def redirect(path, *args)
+      request.secure = true if IS_PROD
+      path = to(path)
 
-class SecureRequests
-  def initialize(app)
-    @app = app
+      if (env['HTTP_VERSION'] == 'HTTP/1.1') && (env['REQUEST_METHOD'] != 'GET')
+        status 303
+      else
+        status 302
+      end
+
+      # According to RFC 2616 section 14.30, "the field value consists of a
+      # single absolute URI"
+      response['Location'] = uri(path.to_s, settings.absolute_redirects?, settings.prefixed_redirects?)
+      halt(*args)
+    end
   end
 
-  def call(env)
-    request.secure = true if IS_PROD
-    @app.call(env)
-  end
+  helpers Flash, JSONParams, SecureRedirects
 end
 
 def current_user
