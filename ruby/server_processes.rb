@@ -21,7 +21,8 @@ module ServerProcesses
   end
 
   def self.bwrap(project_root)
-    # TODO: validate project_root
+    project_root = File.expand_path(project_root)
+    raise "invalid project root #{project_root}" unless project_root.include?("redpear/user-state")
     if IS_PROD
       [
         "bwrap",
