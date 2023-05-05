@@ -53,7 +53,7 @@ module ServerProcesses
 
   def self.spawn(port, project_root:)
     log_directives = { out: "#{project_root}/logs/stdout.log", err: "#{project_root}/logs/stderr.log" }
-    Process.spawn(*bwrap(project_root), "bundle", "exec", "rackup", "-p", dev_port.inspect, chdir: project_root, **log_directives)
+    Process.spawn(*bwrap(project_root), "bundle", "exec", "rackup", "-p", port.inspect, chdir: project_root, **log_directives)
   end
 
   def self.rackup(project:, project_root:, mode:)
