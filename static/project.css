@@ -29,6 +29,7 @@ project-ops {
     display: flex;
     gap: 6px;
     margin-bottom: 20px;
+    min-height: 24px;
 }
 
 section:not(.main) > *:not(:first-child) {
