@@ -4,3 +4,4 @@ static/js/
 node_modules/
 .DS_Store
 user-state/
+build_helpers/walnut
